@@ -12,9 +12,27 @@ export default function PlanningPage() {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle adding item to shopping list (set status to pending)
-  const handleAddToList = (itemId: string) => {
-    updateItem(itemId, { status: 'pending' });
+  // Handle increasing quantity
+  const handleIncreaseQuantity = (itemId: string, currentQuantity: number) => {
+    updateItem(itemId, {
+      quantity: currentQuantity + 1,
+      status: 'pending'
+    });
+  };
+
+  // Handle decreasing quantity
+  const handleDecreaseQuantity = (itemId: string, currentQuantity: number) => {
+    if (currentQuantity <= 1) {
+      // Set to 0 and remove from shopping list
+      updateItem(itemId, {
+        quantity: 0,
+        status: null
+      });
+    } else {
+      updateItem(itemId, {
+        quantity: currentQuantity - 1
+      });
+    }
   };
 
   return (
@@ -84,49 +102,98 @@ export default function PlanningPage() {
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100">
-                  {filteredItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      {/* Item Name */}
-                      <div className="flex-1">
-                        <h3 className="text-base font-medium text-gray-900">
-                          {item.name}
-                        </h3>
-                      </div>
+                  {filteredItems.map((item) => {
+                    const hasQuantity = item.quantity > 0 && item.status === 'pending';
 
-                      {/* Add Button */}
-                      <button
-                        onClick={() => handleAddToList(item.id)}
-                        disabled={item.status === 'pending'}
-                        className={`ml-4 flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                          item.status === 'pending'
-                            ? 'bg-gray-100 cursor-not-allowed'
-                            : 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
-                        }`}
-                        aria-label={item.status === 'pending' ? 'Already on shopping list' : 'Add to shopping list'}
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
                       >
-                        {item.status === 'pending' ? (
-                          <span className="text-2xl">📄</span>
-                        ) : (
-                          <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                  ))}
+                        {/* Item Name */}
+                        <div className="flex-1">
+                          <h3 className="text-base font-medium text-gray-900">
+                            {item.name}
+                          </h3>
+                        </div>
+
+                        {/* Quantity Controls */}
+                        <div className="ml-4 flex items-center gap-2">
+                          {hasQuantity ? (
+                            <>
+                              {/* Minus Button */}
+                              <button
+                                onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
+                                className="flex items-center justify-center w-10 h-10 rounded-full bg-red-600 text-white hover:bg-red-700 active:bg-red-800 transition-colors"
+                                aria-label="Decrease quantity"
+                              >
+                                <svg
+                                  className="w-6 h-6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M20 12H4"
+                                  />
+                                </svg>
+                              </button>
+
+                              {/* Quantity Display */}
+                              <span className="text-lg font-semibold text-gray-900 min-w-[2rem] text-center">
+                                {item.quantity}
+                              </span>
+
+                              {/* Plus Button */}
+                              <button
+                                onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
+                                className="flex items-center justify-center w-10 h-10 rounded-full bg-green-600 text-white hover:bg-green-700 active:bg-green-800 transition-colors"
+                                aria-label="Increase quantity"
+                              >
+                                <svg
+                                  className="w-6 h-6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 4v16m8-8H4"
+                                  />
+                                </svg>
+                              </button>
+                            </>
+                          ) : (
+                            /* Plus Button Only (when quantity is 0 or status is null) */
+                            <button
+                              onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
+                              className="flex items-center justify-center w-10 h-10 rounded-full bg-green-600 text-white hover:bg-green-700 active:bg-green-800 transition-colors"
+                              aria-label="Add to shopping list"
+                            >
+                              <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 4v16m8-8H4"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
