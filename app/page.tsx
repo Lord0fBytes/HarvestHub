@@ -94,11 +94,6 @@ export default function PlanningPage() {
                         <h3 className="text-base font-medium text-gray-900">
                           {item.name}
                         </h3>
-                        {item.status === 'pending' && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 mt-1">
-                            On shopping list
-                          </span>
-                        )}
                       </div>
 
                       {/* Add Button */}
@@ -107,24 +102,28 @@ export default function PlanningPage() {
                         disabled={item.status === 'pending'}
                         className={`ml-4 flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
                           item.status === 'pending'
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            ? 'bg-gray-100 cursor-not-allowed'
                             : 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
                         }`}
                         aria-label="Add to shopping list"
                       >
-                        <svg
-                          className="w-6 h-6"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 4v16m8-8H4"
-                          />
-                        </svg>
+                        {item.status === 'pending' ? (
+                          <span className="text-2xl">📄</span>
+                        ) : (
+                          <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                        )}
                       </button>
                     </div>
                   ))}
