@@ -26,9 +26,13 @@ export default function ShoppingPage() {
     ? shoppingItems
     : shoppingItems.filter(item => item.stores.includes(selectedStore));
 
-  // Handle marking item as purchased
-  const handleMarkPurchased = (itemId: string) => {
-    updateItem(itemId, { status: 'purchased' });
+  // Handle toggling item status
+  const handleToggleStatus = (itemId: string, currentStatus: 'pending' | 'purchased') => {
+    if (currentStatus === 'pending') {
+      updateItem(itemId, { status: 'purchased' });
+    } else {
+      updateItem(itemId, { status: 'pending' });
+    }
   };
 
   return (
@@ -124,14 +128,13 @@ export default function ShoppingPage() {
 
                         {/* Shopping Cart or Dollar Sign Button */}
                         <button
-                          onClick={() => !isPurchased && handleMarkPurchased(item.id)}
-                          disabled={isPurchased}
+                          onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
                           className={`ml-4 flex items-center justify-center w-10 h-10 rounded-full transition-colors flex-shrink-0 ${
                             isPurchased
-                              ? 'bg-gray-200 cursor-not-allowed'
+                              ? 'bg-gray-200 hover:bg-gray-300 active:bg-gray-400'
                               : 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
                           }`}
-                          aria-label={isPurchased ? 'Purchased' : 'Mark as purchased'}
+                          aria-label={isPurchased ? 'Mark as pending (undo)' : 'Mark as purchased'}
                         >
                           {isPurchased ? (
                             // Dollar Sign Icon
