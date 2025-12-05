@@ -97,12 +97,12 @@ export default function Home() {
     return filtered;
   }, [items, selectedTags, selectedStore, selectedStatus, searchQuery, sortBy]);
 
-  const handleAddItem = (input: CreateGroceryItemInput) => {
-    addItem(input);
+  const handleAddItem = async (input: CreateGroceryItemInput) => {
+    await addItem(input);
     setIsModalOpen(false);
   };
 
-  const loadSampleData = () => {
+  const loadSampleData = async () => {
     const sampleItems: CreateGroceryItemInput[] = [
       { name: 'Bananas', quantity: 3, unit: 'bunch', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
       { name: 'Milk', quantity: 1, unit: 'gallon', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'beverages'] },
@@ -116,9 +116,10 @@ export default function Home() {
       { name: 'Pasta', quantity: 3, unit: 'box', status: 'pending', store: 'Trader Joe\'s', aisle: 'Aisle 5', tags: ['pantry', 'grains'] },
       { name: 'Tomatoes', quantity: 6, unit: 'count', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
       { name: 'Cheese', quantity: 1, unit: 'lb', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'cheese'] },
+      { name: 'Rotisserie Chicken', quantity: 1, unit: 'count', status: 'pending', store: 'Costco', aisle: 'Deli', tags: ['protein', 'prepared'] },
     ];
 
-    sampleItems.forEach(item => addItem(item));
+    await Promise.all(sampleItems.map(item => addItem(item)));
   };
 
   const handleEditItem = (input: CreateGroceryItemInput) => {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Sidebar } from "@/components/Sidebar";
 import { BottomNav } from "@/components/BottomNav";
+import { GroceryItemsProvider } from "@/contexts/GroceryItemsContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,18 +30,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex min-h-screen bg-gray-50">
-          {/* Sidebar - Desktop only */}
-          <Sidebar />
+        <GroceryItemsProvider>
+          <div className="flex min-h-screen bg-gray-50">
+            {/* Sidebar - Desktop only */}
+            <Sidebar />
 
-          {/* Main Content */}
-          <main className="flex-1 md:ml-64 pb-16 md:pb-0">
-            {children}
-          </main>
+            {/* Main Content */}
+            <main className="flex-1 md:ml-64 pb-16 md:pb-0">
+              {children}
+            </main>
 
-          {/* Bottom Navigation - Mobile only */}
-          <BottomNav />
-        </div>
+            {/* Bottom Navigation - Mobile only */}
+            <BottomNav />
+          </div>
+        </GroceryItemsProvider>
       </body>
     </html>
   );
