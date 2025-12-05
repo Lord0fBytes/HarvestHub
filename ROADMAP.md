@@ -36,12 +36,18 @@ This document outlines the planned features and releases for HarvestHub, from ba
   - All Items page (full featured)
 - ✅ Sample data loading for testing
 
-## Version 0.4.0 - Planning Page (List Building)
+## Version 0.4.0 - Planning Page & Data Model Enhancements ✅
 
-- List building interface
-- Add items to current shopping list
-- Quick add functionality
-- List organization and grouping
+- ✅ Planning page with search functionality
+- ✅ Quick-add items to shopping list (sets status to pending)
+- ✅ Visual feedback for items already on list
+- ✅ Supabase database integration (persistent data)
+- ✅ Item type classification (grocery/supply/clothing/other)
+- ✅ Multiple stores per item (stores array)
+- ✅ Null status support for master list items
+- ✅ Enhanced ItemForm with type and stores fields
+- ✅ Type filter and sort in All Items page
+- ✅ Database migrations with indexes
 
 ## Version 0.5.0 - Ordering Page (Shopping Mode)
 
@@ -57,12 +63,12 @@ This document outlines the planned features and releases for HarvestHub, from ba
 - Note substitutions or price changes
 - Shopping trip history/summary
 
-## Version 0.7.0 - Database & Persistence
+## Version 0.7.0 - Advanced Features
 
-- Supabase integration
-- Database schema implementation
-- ORM setup (Drizzle or Prisma decision)
-- Data persistence across sessions
+- Recipe integration
+- Meal planning functionality
+- Shopping trip history
+- ORM refinements (if needed)
 
 ## Version 0.8.0 - PWA Features
 

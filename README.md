@@ -7,7 +7,7 @@ A Progressive Web Application (PWA) for managing grocery lists. Designed to be m
 
 ## Current Status
 
-**Version 0.3.0** - Full List Page with Navigation ✅
+**Version 0.4.0** - Planning Page & Data Model Enhancements ✅
 
 Completed features:
 - ✅ **Version 0.1.0** - Foundation & Basic Items
@@ -27,6 +27,13 @@ Completed features:
   - Modal-based add/edit forms
   - Responsive navigation (sidebar + bottom nav)
   - Multi-page structure (Planning, Shopping, Review, All Items)
+- ✅ **Version 0.4.0** - Planning Page & Data Model
+  - Planning page with search and quick-add to shopping list
+  - Supabase database integration (persistent data)
+  - Item type classification (grocery/supply/clothing/other)
+  - Multiple stores per item support
+  - Null status for master list items
+  - Enhanced filtering and display
 
 See the full [Version Roadmap](ROADMAP.md) for upcoming features.
 
