@@ -131,15 +131,15 @@ export default function ShoppingPage() {
                           onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
                           className={`ml-4 flex items-center justify-center w-10 h-10 rounded-full transition-colors flex-shrink-0 ${
                             isPurchased
-                              ? 'bg-gray-200 hover:bg-gray-300 active:bg-gray-400'
-                              : 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
+                              ? 'bg-gray-700 hover:bg-gray-600 active:bg-gray-500'
+                              : 'bg-gray-600 text-white hover:bg-gray-500 active:bg-gray-400'
                           }`}
                           aria-label={isPurchased ? 'Mark as pending (undo)' : 'Mark as purchased'}
                         >
                           {isPurchased ? (
                             // Dollar Sign Icon
                             <svg
-                              className="w-5 h-5 text-gray-700"
+                              className="w-5 h-5 text-gray-400"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
