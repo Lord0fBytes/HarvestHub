@@ -52,7 +52,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 z-50">
       <div className="grid grid-cols-4 h-16">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -62,8 +62,8 @@ export function BottomNav() {
               href={item.href}
               className={`flex flex-col items-center justify-center gap-1 transition-colors ${
                 isActive
-                  ? 'text-green-600'
-                  : 'text-gray-600'
+                  ? 'text-green-400'
+                  : 'text-gray-400'
               }`}
             >
               {item.icon}

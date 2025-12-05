@@ -50,15 +50,15 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className="relative w-full max-w-2xl bg-white rounded-lg shadow-xl"
+          className="relative w-full max-w-2xl bg-gray-800 rounded-lg shadow-xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900">{title}</h2>
+          <div className="flex items-center justify-between p-6 border-b border-gray-700">
+            <h2 className="text-2xl font-semibold text-gray-100">{title}</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              className="text-gray-400 hover:text-gray-300 focus:outline-none"
               aria-label="Close modal"
             >
               <svg

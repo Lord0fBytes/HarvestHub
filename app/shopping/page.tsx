@@ -41,10 +41,10 @@ export default function ShoppingPage() {
         <div className="space-y-6">
           {/* Header */}
           <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-2xl font-semibold text-gray-100 mb-4">
               Shopping Mode
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-400 mb-6">
               Check off items as you shop
             </p>
 
@@ -53,7 +53,7 @@ export default function ShoppingPage() {
               <select
                 value={selectedStore}
                 onChange={(e) => setSelectedStore(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
+                className="w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="all">All Stores ({shoppingItems.length} items)</option>
                 {stores.map(store => {
@@ -68,11 +68,11 @@ export default function ShoppingPage() {
             </div>
 
             {/* Items List */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-gray-800 rounded-lg border border-gray-700 shadow-sm">
               {filteredItems.length === 0 ? (
                 <div className="p-8 text-center">
                   <svg
-                    className="mx-auto h-12 w-12 text-gray-400 mb-4"
+                    className="mx-auto h-12 w-12 text-gray-600 mb-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -84,23 +84,23 @@ export default function ShoppingPage() {
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                     />
                   </svg>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">
                     No items to shop for
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-400">
                     {selectedStore === 'all'
                       ? 'Go to Planning to add items to your shopping list'
                       : `No items for ${selectedStore}`}
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-700">
                   {filteredItems.map((item) => {
                     const isPurchased = item.status === 'purchased';
                     return (
                       <div
                         key={item.id}
-                        className={`flex items-center justify-between p-4 hover:bg-gray-50 transition-colors ${
+                        className={`flex items-center justify-between p-4 hover:bg-gray-700 transition-colors ${
                           isPurchased ? 'opacity-60' : ''
                         }`}
                       >
@@ -108,17 +108,17 @@ export default function ShoppingPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 text-sm">
                             <h3 className={`font-medium truncate ${
-                              isPurchased ? 'text-gray-500 line-through' : 'text-gray-900'
+                              isPurchased ? 'text-gray-400 line-through' : 'text-gray-100'
                             }`}>
                               {item.name}
                             </h3>
-                            <span className="text-gray-500 whitespace-nowrap">
+                            <span className="text-gray-400 whitespace-nowrap">
                               {item.quantity} {item.unit}
                             </span>
                             {item.aisle && (
                               <>
-                                <span className="text-gray-300">•</span>
-                                <span className="text-gray-500 whitespace-nowrap">
+                                <span className="text-gray-600">•</span>
+                                <span className="text-gray-400 whitespace-nowrap">
                                   Aisle {item.aisle}
                                 </span>
                               </>
@@ -139,7 +139,7 @@ export default function ShoppingPage() {
                           {isPurchased ? (
                             // Dollar Sign Icon
                             <svg
-                              className="w-5 h-5 text-gray-600"
+                              className="w-5 h-5 text-gray-700"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -177,7 +177,7 @@ export default function ShoppingPage() {
 
             {/* Item Count */}
             {filteredItems.length > 0 && (
-              <div className="mt-4 text-sm text-gray-600 text-center">
+              <div className="mt-4 text-sm text-gray-400 text-center">
                 {selectedStore === 'all'
                   ? `${filteredItems.length} items on your shopping list`
                   : `Showing ${filteredItems.length} items for ${selectedStore}`}

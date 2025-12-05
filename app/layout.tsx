@@ -31,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <GroceryItemsProvider>
-          <div className="flex min-h-screen bg-gray-50">
+          <div className="flex min-h-screen bg-gray-900">
             {/* Sidebar - Desktop only */}
             <Sidebar />
 

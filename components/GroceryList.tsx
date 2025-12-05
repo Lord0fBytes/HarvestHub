@@ -35,7 +35,7 @@ export function GroceryList({
       {items.map((item) => (
         <div
           key={item.id}
-          className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow"
+          className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="flex items-start justify-between gap-4">
             {bulkMode && onToggleSelection && (
@@ -44,13 +44,13 @@ export function GroceryList({
                   type="checkbox"
                   checked={selectedItems?.has(item.id) || false}
                   onChange={() => onToggleSelection(item.id)}
-                  className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                  className="w-5 h-5 text-green-600 border-gray-700 rounded focus:ring-green-500"
                 />
               </div>
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-2 mb-1">
-                <h3 className="text-lg font-medium text-gray-900 truncate">
+                <h3 className="text-lg font-medium text-gray-100 truncate">
                   {item.name}
                 </h3>
                 <span
@@ -61,7 +61,7 @@ export function GroceryList({
                       ? 'bg-yellow-100 text-yellow-800'
                       : item.status === 'pending'
                       ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-600'
+                      : 'bg-gray-700 text-gray-400'
                   }`}
                 >
                   {item.status ?? 'none'}
@@ -80,7 +80,7 @@ export function GroceryList({
                   {item.type}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mb-1">
+              <p className="text-sm text-gray-400 mb-1">
                 {item.quantity} {item.unit}
               </p>
               {(item.stores.length > 0 || item.aisle) && (
@@ -123,7 +123,7 @@ export function GroceryList({
               <select
                 value={item.status ?? ''}
                 onChange={(e) => onStatusChange(item.id, e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
-                className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="text-sm border border-gray-700 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
               >
                 <option value="">None</option>
                 <option value="pending">Pending</option>

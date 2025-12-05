@@ -114,10 +114,10 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
   ];
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg border border-gray-700 p-6 shadow-sm">
       <div className="space-y-4">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
             Item Name *
           </label>
           <input
@@ -127,13 +127,13 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Bananas"
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="quantity" className="block text-sm font-medium text-gray-300 mb-1">
               Quantity *
             </label>
             <input
@@ -144,19 +144,19 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
               min="0.01"
               step="0.01"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           <div>
-            <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="unit" className="block text-sm font-medium text-gray-300 mb-1">
               Unit *
             </label>
             <select
               id="unit"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               {commonUnits.map((u) => (
                 <option key={u} value={u}>
@@ -169,14 +169,14 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-1">
               Type *
             </label>
             <select
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value as GroceryItem['type'])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="grocery">Grocery</option>
               <option value="supply">Supply</option>
@@ -186,7 +186,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
           </div>
 
           <div>
-            <label htmlFor="aisle" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="aisle" className="block text-sm font-medium text-gray-300 mb-1">
               Aisle/Row
             </label>
             <input
@@ -195,13 +195,13 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
               value={aisle}
               onChange={(e) => setAisle(e.target.value)}
               placeholder="e.g., Aisle 5, Produce"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="stores" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="stores" className="block text-sm font-medium text-gray-300 mb-1">
             Stores
           </label>
           <div className="space-y-2">
@@ -218,12 +218,12 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
                   }
                 }}
                 placeholder="e.g., Costco, Trader Joe's"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="flex-1 px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <button
                 type="button"
                 onClick={handleAddStore}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-200"
               >
                 Add
               </button>
@@ -251,7 +251,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
         </div>
 
         <div>
-          <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="tags" className="block text-sm font-medium text-gray-300 mb-1">
             Tags
           </label>
           <div className="space-y-2">
@@ -263,12 +263,12 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagKeyDown}
                 placeholder="Add a tag (e.g., produce, dairy)"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="flex-1 px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-4 py-2 bg-gray-200 text-gray-300 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Add
               </button>
@@ -298,14 +298,14 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
 
         {initialData && (
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-1">
               Status
             </label>
             <select
               id="status"
               value={status ?? ''}
               onChange={(e) => setStatus(e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="">None</option>
               <option value="pending">Pending</option>
@@ -326,7 +326,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium"
+              className="px-4 py-2 border border-gray-700 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium"
             >
               Cancel
             </button>
