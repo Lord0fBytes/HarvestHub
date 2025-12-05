@@ -1,0 +1,80 @@
+'use client';
+
+import { GroceryItem } from '@/types/grocery';
+
+interface GroceryListProps {
+  items: GroceryItem[];
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  onStatusChange: (id: string, status: GroceryItem['status']) => void;
+}
+
+export function GroceryList({ items, onEdit, onDelete, onStatusChange }: GroceryListProps) {
+  if (items.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-lg">No items in your list yet.</p>
+        <p className="text-sm mt-2">Add your first item to get started!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {items.map((item) => (
+        <div
+          key={item.id}
+          className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-2 mb-1">
+                <h3 className="text-lg font-medium text-gray-900 truncate">
+                  {item.name}
+                </h3>
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                    item.status === 'purchased'
+                      ? 'bg-green-100 text-green-800'
+                      : item.status === 'skipped'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {item.status}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600">
+                {item.quantity} {item.unit}
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <select
+                value={item.status}
+                onChange={(e) => onStatusChange(item.id, e.target.value as GroceryItem['status'])}
+                className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="pending">Pending</option>
+                <option value="purchased">Purchased</option>
+                <option value="skipped">Skipped</option>
+              </select>
+              <button
+                onClick={() => onEdit(item.id)}
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => onDelete(item.id)}
+                className="text-red-600 hover:text-red-800 text-sm font-medium"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
