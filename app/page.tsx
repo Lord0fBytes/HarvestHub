@@ -99,6 +99,25 @@ export default function Home() {
     addItem(input);
   };
 
+  const loadSampleData = () => {
+    const sampleItems: CreateGroceryItemInput[] = [
+      { name: 'Bananas', quantity: 3, unit: 'bunch', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
+      { name: 'Milk', quantity: 1, unit: 'gallon', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'beverages'] },
+      { name: 'Bread', quantity: 2, unit: 'loaf', status: 'purchased', store: 'Trader Joe\'s', aisle: 'Bakery', tags: ['bakery', 'grains'] },
+      { name: 'Chicken Breast', quantity: 2, unit: 'lb', status: 'pending', store: 'Costco', aisle: 'Meat', tags: ['protein', 'meat'] },
+      { name: 'Apples', quantity: 5, unit: 'count', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
+      { name: 'Eggs', quantity: 2, unit: 'dozen', status: 'skipped', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'protein'] },
+      { name: 'Greek Yogurt', quantity: 6, unit: 'count', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'breakfast'] },
+      { name: 'Baby Spinach', quantity: 1, unit: 'bag', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
+      { name: 'Olive Oil', quantity: 1, unit: 'bottle', status: 'purchased', store: 'Costco', aisle: 'Aisle 12', tags: ['pantry', 'cooking'] },
+      { name: 'Pasta', quantity: 3, unit: 'box', status: 'pending', store: 'Trader Joe\'s', aisle: 'Aisle 5', tags: ['pantry', 'grains'] },
+      { name: 'Tomatoes', quantity: 6, unit: 'count', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
+      { name: 'Cheese', quantity: 1, unit: 'lb', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'cheese'] },
+    ];
+
+    sampleItems.forEach(item => addItem(item));
+  };
+
   const handleEditItem = (input: CreateGroceryItemInput) => {
     if (editingId) {
       updateItem(editingId, input);
@@ -178,8 +197,20 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">HarvestHub</h1>
-          <p className="text-gray-600">Your grocery shopping companion</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">HarvestHub</h1>
+              <p className="text-gray-600">Your grocery shopping companion</p>
+            </div>
+            {items.length === 0 && (
+              <button
+                onClick={loadSampleData}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+              >
+                Load Sample Data
+              </button>
+            )}
+          </div>
         </header>
 
         <div className="space-y-6">
