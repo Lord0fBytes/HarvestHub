@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
 import { GroceryList } from '@/components/GroceryList';
 import { ItemForm } from '@/components/ItemForm';
+import { Modal } from '@/components/Modal';
 import { CreateGroceryItemInput, GroceryItem } from '@/types/grocery';
 
 type SortOption = 'name' | 'store' | 'aisle' | 'dateAdded';
@@ -11,6 +12,7 @@ type SortOption = 'name' | 'store' | 'aisle' | 'dateAdded';
 export default function Home() {
   const { items, addItem, updateItem, deleteItem } = useGroceryItems();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedStore, setSelectedStore] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
@@ -97,6 +99,7 @@ export default function Home() {
 
   const handleAddItem = (input: CreateGroceryItemInput) => {
     addItem(input);
+    setIsModalOpen(false);
   };
 
   const loadSampleData = () => {
@@ -122,11 +125,23 @@ export default function Home() {
     if (editingId) {
       updateItem(editingId, input);
       setEditingId(null);
+      setIsModalOpen(false);
     }
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
+    setIsModalOpen(false);
+  };
+
+  const handleOpenAddModal = () => {
+    setEditingId(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (id: string) => {
+    setEditingId(id);
+    setIsModalOpen(true);
   };
 
   const handleDeleteItem = (id: string) => {
@@ -215,23 +230,11 @@ export default function Home() {
 
         <div className="space-y-6">
           <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              {editingItem ? 'Edit Item' : 'Add New Item'}
-            </h2>
-            <ItemForm
-              onSubmit={editingItem ? handleEditItem : handleAddItem}
-              onCancel={editingItem ? handleCancelEdit : undefined}
-              initialData={editingItem || undefined}
-              submitLabel={editingItem ? 'Update Item' : 'Add Item'}
-            />
-          </section>
-
-          <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold text-gray-900">
                 Shopping List
               </h2>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-600">
                   {filteredAndSortedItems.length} of {items.length} {items.length === 1 ? 'item' : 'items'}
                 </span>
@@ -252,6 +255,12 @@ export default function Home() {
                     {selectedItems.size > 0 ? `Cancel (${selectedItems.size} selected)` : 'Select Items'}
                   </button>
                 )}
+                <button
+                  onClick={handleOpenAddModal}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm font-medium"
+                >
+                  + Add Item
+                </button>
               </div>
             </div>
 
@@ -434,7 +443,7 @@ export default function Home() {
 
             <GroceryList
               items={filteredAndSortedItems}
-              onEdit={setEditingId}
+              onEdit={handleOpenEditModal}
               onDelete={handleDeleteItem}
               onStatusChange={handleStatusChange}
               selectedItems={selectedItems}
@@ -444,6 +453,20 @@ export default function Home() {
           </section>
         </div>
       </div>
+
+      {/* Add/Edit Item Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCancelEdit}
+        title={editingItem ? 'Edit Item' : 'Add New Item'}
+      >
+        <ItemForm
+          onSubmit={editingItem ? handleEditItem : handleAddItem}
+          onCancel={handleCancelEdit}
+          initialData={editingItem || undefined}
+          submitLabel={editingItem ? 'Update Item' : 'Add Item'}
+        />
+      </Modal>
     </div>
   );
 }
