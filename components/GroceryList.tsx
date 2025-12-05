@@ -59,21 +59,51 @@ export function GroceryList({
                       ? 'bg-green-100 text-green-800'
                       : item.status === 'skipped'
                       ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-gray-100 text-gray-800'
+                      : item.status === 'pending'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-gray-100 text-gray-600'
                   }`}
                 >
-                  {item.status}
+                  {item.status ?? 'none'}
+                </span>
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                    item.type === 'grocery'
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : item.type === 'supply'
+                      ? 'bg-orange-100 text-orange-700'
+                      : item.type === 'clothing'
+                      ? 'bg-pink-100 text-pink-700'
+                      : 'bg-slate-100 text-slate-700'
+                  }`}
+                >
+                  {item.type}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-1">
                 {item.quantity} {item.unit}
               </p>
-              {(item.store || item.aisle) && (
-                <p className="text-sm text-gray-500">
-                  {item.store && <span className="font-medium">{item.store}</span>}
-                  {item.store && item.aisle && <span className="mx-1">•</span>}
-                  {item.aisle && <span>{item.aisle}</span>}
-                </p>
+              {(item.stores.length > 0 || item.aisle) && (
+                <div className="flex flex-wrap items-center gap-1 mt-1">
+                  {item.stores.length > 0 && (
+                    <>
+                      {item.stores.map((store) => (
+                        <span
+                          key={store}
+                          className="inline-flex items-center px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs"
+                        >
+                          {store}
+                        </span>
+                      ))}
+                    </>
+                  )}
+                  {item.stores.length > 0 && item.aisle && (
+                    <span className="text-gray-400 text-xs">•</span>
+                  )}
+                  {item.aisle && (
+                    <span className="text-sm text-gray-500">{item.aisle}</span>
+                  )}
+                </div>
               )}
               {item.tags && item.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
@@ -91,10 +121,11 @@ export function GroceryList({
 
             <div className="flex gap-2">
               <select
-                value={item.status}
-                onChange={(e) => onStatusChange(item.id, e.target.value as GroceryItem['status'])}
+                value={item.status ?? ''}
+                onChange={(e) => onStatusChange(item.id, e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
                 className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
               >
+                <option value="">None</option>
                 <option value="pending">Pending</option>
                 <option value="purchased">Purchased</option>
                 <option value="skipped">Skipped</option>

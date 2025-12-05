@@ -1,12 +1,14 @@
 export type ItemStatus = 'pending' | 'purchased' | 'skipped';
+export type ItemType = 'grocery' | 'supply' | 'clothing' | 'other';
 
 export interface GroceryItem {
   id: string;
   name: string;
   quantity: number;
   unit: string;
-  status: ItemStatus;
-  store?: string;
+  status: ItemStatus | null;
+  type: ItemType;
+  stores: string[];
   aisle?: string;
   tags: string[];
   createdAt: Date;

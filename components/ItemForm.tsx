@@ -14,8 +14,10 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
   const [name, setName] = useState(initialData?.name || '');
   const [quantity, setQuantity] = useState(initialData?.quantity.toString() || '1');
   const [unit, setUnit] = useState(initialData?.unit || 'count');
-  const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status || 'pending');
-  const [store, setStore] = useState(initialData?.store || '');
+  const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status ?? null);
+  const [type, setType] = useState<GroceryItem['type']>(initialData?.type || 'grocery');
+  const [stores, setStores] = useState<string[]>(initialData?.stores || []);
+  const [storeInput, setStoreInput] = useState('');
   const [aisle, setAisle] = useState(initialData?.aisle || '');
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [tagInput, setTagInput] = useState('');
@@ -26,7 +28,8 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
       setQuantity(initialData.quantity.toString());
       setUnit(initialData.unit);
       setStatus(initialData.status);
-      setStore(initialData.store || '');
+      setType(initialData.type);
+      setStores(initialData.stores || []);
       setAisle(initialData.aisle || '');
       setTags(initialData.tags || []);
     }
@@ -41,7 +44,8 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
       quantity: parseFloat(quantity) || 1,
       unit: unit.trim(),
       status,
-      store: store.trim() || undefined,
+      type,
+      stores,
       aisle: aisle.trim() || undefined,
       tags,
     });
@@ -50,12 +54,26 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
       setName('');
       setQuantity('1');
       setUnit('count');
-      setStatus('pending');
-      setStore('');
+      setStatus(null);
+      setType('grocery');
+      setStores([]);
+      setStoreInput('');
       setAisle('');
       setTags([]);
       setTagInput('');
     }
+  };
+
+  const handleAddStore = () => {
+    const trimmedStore = storeInput.trim();
+    if (trimmedStore && !stores.includes(trimmedStore)) {
+      setStores([...stores, trimmedStore]);
+      setStoreInput('');
+    }
+  };
+
+  const handleRemoveStore = (store: string) => {
+    setStores(stores.filter(s => s !== store));
   };
 
   const handleAddTag = () => {
@@ -151,17 +169,20 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="store" className="block text-sm font-medium text-gray-700 mb-1">
-              Store
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+              Type *
             </label>
-            <input
-              type="text"
-              id="store"
-              value={store}
-              onChange={(e) => setStore(e.target.value)}
-              placeholder="e.g., Costco, Trader Joe's"
+            <select
+              id="type"
+              value={type}
+              onChange={(e) => setType(e.target.value as GroceryItem['type'])}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
+            >
+              <option value="grocery">Grocery</option>
+              <option value="supply">Supply</option>
+              <option value="clothing">Clothing</option>
+              <option value="other">Other</option>
+            </select>
           </div>
 
           <div>
@@ -176,6 +197,56 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
               placeholder="e.g., Aisle 5, Produce"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="stores" className="block text-sm font-medium text-gray-700 mb-1">
+            Stores
+          </label>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                id="stores"
+                value={storeInput}
+                onChange={(e) => setStoreInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddStore();
+                  }
+                }}
+                placeholder="e.g., Costco, Trader Joe's"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <button
+                type="button"
+                onClick={handleAddStore}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+              >
+                Add
+              </button>
+            </div>
+            {stores.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {stores.map((store) => (
+                  <span
+                    key={store}
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
+                  >
+                    {store}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveStore(store)}
+                      className="hover:text-purple-900"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -232,10 +303,11 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
             </label>
             <select
               id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as GroceryItem['status'])}
+              value={status ?? ''}
+              onChange={(e) => setStatus(e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             >
+              <option value="">None</option>
               <option value="pending">Pending</option>
               <option value="purchased">Purchased</option>
               <option value="skipped">Skipped</option>
