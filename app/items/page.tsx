@@ -7,7 +7,7 @@ import { ItemForm } from '@/components/ItemForm';
 import { Modal } from '@/components/Modal';
 import { CreateGroceryItemInput, GroceryItem } from '@/types/grocery';
 
-type SortOption = 'name' | 'store' | 'aisle' | 'dateAdded';
+type SortOption = 'name' | 'type' | 'aisle' | 'dateAdded';
 
 export default function Home() {
   const { items, addItem, updateItem, deleteItem } = useGroceryItems();
@@ -15,6 +15,7 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedStore, setSelectedStore] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<SortOption>('dateAdded');
@@ -34,7 +35,7 @@ export default function Home() {
   const allStores = useMemo(() => {
     const storeSet = new Set<string>();
     items.forEach(item => {
-      if (item.store) storeSet.add(item.store);
+      item.stores.forEach(store => storeSet.add(store));
     });
     return Array.from(storeSet).sort();
   }, [items]);
@@ -56,7 +57,7 @@ export default function Home() {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(item =>
         item.name.toLowerCase().includes(query) ||
-        item.store?.toLowerCase().includes(query) ||
+        item.stores.some(store => store.toLowerCase().includes(query)) ||
         item.aisle?.toLowerCase().includes(query) ||
         item.tags?.some(tag => tag.toLowerCase().includes(query))
       );
@@ -71,7 +72,12 @@ export default function Home() {
 
     // Filter by store
     if (selectedStore) {
-      filtered = filtered.filter(item => item.store === selectedStore);
+      filtered = filtered.filter(item => item.stores.includes(selectedStore));
+    }
+
+    // Filter by type
+    if (selectedType) {
+      filtered = filtered.filter(item => item.type === selectedType);
     }
 
     // Filter by status
@@ -88,8 +94,8 @@ export default function Home() {
       switch (sortBy) {
         case 'name':
           return a.name.localeCompare(b.name);
-        case 'store':
-          return (a.store || '').localeCompare(b.store || '');
+        case 'type':
+          return a.type.localeCompare(b.type);
         case 'aisle':
           return (a.aisle || '').localeCompare(b.aisle || '');
         case 'dateAdded':
@@ -99,7 +105,7 @@ export default function Home() {
     });
 
     return filtered;
-  }, [items, selectedTags, selectedStore, selectedStatus, searchQuery, sortBy]);
+  }, [items, selectedTags, selectedStore, selectedType, selectedStatus, searchQuery, sortBy]);
 
   const handleAddItem = async (input: CreateGroceryItemInput) => {
     await addItem(input);
@@ -108,19 +114,21 @@ export default function Home() {
 
   const loadSampleData = async () => {
     const sampleItems: CreateGroceryItemInput[] = [
-      { name: 'Bananas', quantity: 3, unit: 'bunch', status: null, store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
-      { name: 'Milk', quantity: 1, unit: 'gallon', status: null, store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'beverages'] },
-      { name: 'Bread', quantity: 2, unit: 'loaf', status: 'purchased', store: 'Trader Joe\'s', aisle: 'Bakery', tags: ['bakery', 'grains'] },
-      { name: 'Chicken Breast', quantity: 2, unit: 'lb', status: 'pending', store: 'Costco', aisle: 'Meat', tags: ['protein', 'meat'] },
-      { name: 'Apples', quantity: 5, unit: 'count', status: null, store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
-      { name: 'Eggs', quantity: 2, unit: 'dozen', status: 'skipped', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'protein'] },
-      { name: 'Greek Yogurt', quantity: 6, unit: 'count', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'breakfast'] },
-      { name: 'Baby Spinach', quantity: 1, unit: 'bag', status: null, store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
-      { name: 'Olive Oil', quantity: 1, unit: 'bottle', status: 'purchased', store: 'Costco', aisle: 'Aisle 12', tags: ['pantry', 'cooking'] },
-      { name: 'Pasta', quantity: 3, unit: 'box', status: null, store: 'Trader Joe\'s', aisle: 'Aisle 5', tags: ['pantry', 'grains'] },
-      { name: 'Tomatoes', quantity: 6, unit: 'count', status: null, store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
-      { name: 'Cheese', quantity: 1, unit: 'lb', status: null, store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'cheese'] },
-      { name: 'Rotisserie Chicken', quantity: 1, unit: 'count', status: null, store: 'Costco', aisle: 'Deli', tags: ['protein', 'prepared'] },
+      { name: 'Bananas', quantity: 3, unit: 'bunch', status: null, type: 'grocery', stores: ['Costco', 'BJ\'s'], aisle: 'Produce', tags: ['fruit', 'produce'] },
+      { name: 'Milk', quantity: 1, unit: 'gallon', status: null, type: 'grocery', stores: ['Trader Joe\'s'], aisle: 'Dairy', tags: ['dairy', 'beverages'] },
+      { name: 'Bread', quantity: 2, unit: 'loaf', status: 'purchased', type: 'grocery', stores: ['Trader Joe\'s', 'Costco'], aisle: 'Bakery', tags: ['bakery', 'grains'] },
+      { name: 'Chicken Breast', quantity: 2, unit: 'lb', status: 'pending', type: 'grocery', stores: ['Costco'], aisle: 'Meat', tags: ['protein', 'meat'] },
+      { name: 'Apples', quantity: 5, unit: 'count', status: null, type: 'grocery', stores: ['Costco', 'BJ\'s'], aisle: 'Produce', tags: ['fruit', 'produce'] },
+      { name: 'Eggs', quantity: 2, unit: 'dozen', status: 'skipped', type: 'grocery', stores: ['Trader Joe\'s'], aisle: 'Dairy', tags: ['dairy', 'protein'] },
+      { name: 'Greek Yogurt', quantity: 6, unit: 'count', status: 'pending', type: 'grocery', stores: ['Trader Joe\'s'], aisle: 'Dairy', tags: ['dairy', 'breakfast'] },
+      { name: 'Baby Spinach', quantity: 1, unit: 'bag', status: null, type: 'grocery', stores: ['Costco', 'Trader Joe\'s'], aisle: 'Produce', tags: ['vegetables', 'produce'] },
+      { name: 'Olive Oil', quantity: 1, unit: 'bottle', status: 'purchased', type: 'grocery', stores: ['Costco'], aisle: 'Aisle 12', tags: ['pantry', 'cooking'] },
+      { name: 'Pasta', quantity: 3, unit: 'box', status: null, type: 'grocery', stores: ['Trader Joe\'s'], aisle: 'Aisle 5', tags: ['pantry', 'grains'] },
+      { name: 'Tomatoes', quantity: 6, unit: 'count', status: null, type: 'grocery', stores: ['Costco', 'BJ\'s'], aisle: 'Produce', tags: ['vegetables', 'produce'] },
+      { name: 'Cheese', quantity: 1, unit: 'lb', status: null, type: 'grocery', stores: ['Trader Joe\'s', 'Costco'], aisle: 'Dairy', tags: ['dairy', 'cheese'] },
+      { name: 'Rotisserie Chicken', quantity: 1, unit: 'count', status: null, type: 'grocery', stores: ['Costco'], aisle: 'Deli', tags: ['protein', 'prepared'] },
+      { name: 'Paper Towels', quantity: 2, unit: 'pack', status: null, type: 'supply', stores: ['Costco', 'Target'], aisle: 'Paper Goods', tags: ['household'] },
+      { name: 'Kids T-Shirts', quantity: 3, unit: 'count', status: null, type: 'clothing', stores: ['Target', 'Old Navy'], aisle: 'Kids', tags: ['clothing'] },
     ];
 
     await Promise.all(sampleItems.map(item => addItem(item)));
@@ -173,6 +181,7 @@ export default function Home() {
   const clearFilters = () => {
     setSelectedTags([]);
     setSelectedStore('');
+    setSelectedType('');
     setSelectedStatus('');
     setSearchQuery('');
   };
@@ -340,13 +349,31 @@ export default function Home() {
                     >
                       <option value="dateAdded">Date Added (Newest)</option>
                       <option value="name">Name (A-Z)</option>
-                      <option value="store">Store</option>
+                      <option value="type">Type</option>
                       <option value="aisle">Aisle/Row</option>
                     </select>
                   </div>
 
-                  {/* Store and Status Filters */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Type, Store, and Status Filters */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label htmlFor="type-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                        Filter by Type
+                      </label>
+                      <select
+                        id="type-filter"
+                        value={selectedType}
+                        onChange={(e) => setSelectedType(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="">All Types</option>
+                        <option value="grocery">Grocery</option>
+                        <option value="supply">Supply</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+
                     {allStores.length > 0 && (
                       <div>
                         <label htmlFor="store-filter" className="block text-sm font-medium text-gray-700 mb-2">
@@ -394,7 +421,7 @@ export default function Home() {
                         <label className="block text-sm font-medium text-gray-700">
                           Filter by Tags
                         </label>
-                        {(selectedTags.length > 0 || selectedStore || selectedStatus || searchQuery) && (
+                        {(selectedTags.length > 0 || selectedStore || selectedType || selectedStatus || searchQuery) && (
                           <button
                             onClick={clearFilters}
                             className="text-sm text-blue-600 hover:text-blue-800"
