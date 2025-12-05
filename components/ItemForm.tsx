@@ -15,6 +15,10 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
   const [quantity, setQuantity] = useState(initialData?.quantity.toString() || '1');
   const [unit, setUnit] = useState(initialData?.unit || 'count');
   const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status || 'pending');
+  const [store, setStore] = useState(initialData?.store || '');
+  const [aisle, setAisle] = useState(initialData?.aisle || '');
+  const [tags, setTags] = useState<string[]>(initialData?.tags || []);
+  const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
     if (initialData) {
@@ -22,6 +26,9 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
       setQuantity(initialData.quantity.toString());
       setUnit(initialData.unit);
       setStatus(initialData.status);
+      setStore(initialData.store || '');
+      setAisle(initialData.aisle || '');
+      setTags(initialData.tags || []);
     }
   }, [initialData]);
 
@@ -34,6 +41,9 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
       quantity: parseFloat(quantity) || 1,
       unit: unit.trim(),
       status,
+      store: store.trim() || undefined,
+      aisle: aisle.trim() || undefined,
+      tags,
     });
 
     if (!initialData) {
@@ -41,6 +51,29 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
       setQuantity('1');
       setUnit('count');
       setStatus('pending');
+      setStore('');
+      setAisle('');
+      setTags([]);
+      setTagInput('');
+    }
+  };
+
+  const handleAddTag = () => {
+    const trimmedTag = tagInput.trim().toLowerCase();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags([...tags, trimmedTag]);
+      setTagInput('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag();
     }
   };
 
@@ -113,6 +146,82 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="store" className="block text-sm font-medium text-gray-700 mb-1">
+              Store
+            </label>
+            <input
+              type="text"
+              id="store"
+              value={store}
+              onChange={(e) => setStore(e.target.value)}
+              placeholder="e.g., Costco, Trader Joe's"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="aisle" className="block text-sm font-medium text-gray-700 mb-1">
+              Aisle/Row
+            </label>
+            <input
+              type="text"
+              id="aisle"
+              value={aisle}
+              onChange={(e) => setAisle(e.target.value)}
+              placeholder="e.g., Aisle 5, Produce"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
+            Tags
+          </label>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                id="tags"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagKeyDown}
+                placeholder="Add a tag (e.g., produce, dairy)"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <button
+                type="button"
+                onClick={handleAddTag}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Add
+              </button>
+            </div>
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className="hover:text-blue-900 focus:outline-none"
+                      aria-label={`Remove ${tag} tag`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

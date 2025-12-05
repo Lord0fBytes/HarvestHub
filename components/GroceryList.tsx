@@ -44,9 +44,28 @@ export function GroceryList({ items, onEdit, onDelete, onStatusChange }: Grocery
                   {item.status}
                 </span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 mb-1">
                 {item.quantity} {item.unit}
               </p>
+              {(item.store || item.aisle) && (
+                <p className="text-sm text-gray-500">
+                  {item.store && <span className="font-medium">{item.store}</span>}
+                  {item.store && item.aisle && <span className="mx-1">•</span>}
+                  {item.aisle && <span>{item.aisle}</span>}
+                </p>
+              )}
+              {item.tags && item.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {item.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2">

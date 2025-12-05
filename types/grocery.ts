@@ -6,6 +6,9 @@ export interface GroceryItem {
   quantity: number;
   unit: string;
   status: ItemStatus;
+  store?: string;
+  aisle?: string;
+  tags: string[];
   createdAt: Date;
   updatedAt: Date;
 }
