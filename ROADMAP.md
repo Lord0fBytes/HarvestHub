@@ -9,19 +9,32 @@ This document outlines the planned features and releases for HarvestHub, from ba
 - Item properties: name, quantity, unit of measure, status
 - In-memory state management (no persistence yet)
 
-## Version 0.2.0 - Item Organization
+## Version 0.2.0 - Item Organization ✅
 
-- Tagging system implementation
-- Add store and aisle/row properties
-- Basic filtering by tags
-- Sort functionality
+- ✅ Tagging system implementation (multi-tag support)
+- ✅ Add store and aisle/row properties
+- ✅ Basic filtering by tags
+- ✅ Sort functionality (name, store, aisle, date added)
+- ✅ Enhanced ItemForm with new fields
+- ✅ Tag badges with visual feedback
 
-## Version 0.3.0 - Full List Page
+## Version 0.3.0 - Full List Page ✅
 
-- Complete master list view
-- Advanced filtering (by store, tags, status)
-- Search functionality
-- Bulk operations (mark multiple as purchased, delete, etc.)
+- ✅ Complete master list view
+- ✅ Advanced filtering (by store, tags, status)
+- ✅ Search functionality (name, store, aisle, tags)
+- ✅ Bulk operations (select all, mark as purchased, delete multiple)
+- ✅ Statistics dashboard (total, pending, purchased, skipped)
+- ✅ Modal-based add/edit forms (cleaner UI)
+- ✅ Responsive navigation system:
+  - Desktop: Left sidebar navigation
+  - Mobile: Bottom navigation bar
+- ✅ Multi-page structure with placeholders:
+  - Planning page (home)
+  - Shopping page
+  - Review page
+  - All Items page (full featured)
+- ✅ Sample data loading for testing
 
 ## Version 0.4.0 - Planning Page (List Building)
 
