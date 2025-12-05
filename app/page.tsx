@@ -150,7 +150,7 @@ export default function PlanningPage() {
                               {/* Plus Button */}
                               <button
                                 onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
-                                className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-600 text-white hover:bg-gray-500 active:bg-gray-400 transition-colors"
+                                className="flex items-center justify-center w-10 h-10 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
                                 aria-label="Increase quantity"
                               >
                                 <svg
@@ -172,7 +172,7 @@ export default function PlanningPage() {
                             /* Plus Button Only (when quantity is 0 or status is null) */
                             <button
                               onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
-                              className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-600 text-white hover:bg-gray-500 active:bg-gray-400 transition-colors"
+                              className="flex items-center justify-center w-10 h-10 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
                               aria-label="Add to shopping list"
                             >
                               <svg

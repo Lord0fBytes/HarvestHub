@@ -132,7 +132,7 @@ export default function ShoppingPage() {
                           className={`ml-4 flex items-center justify-center w-10 h-10 rounded-full transition-colors flex-shrink-0 ${
                             isPurchased
                               ? 'bg-gray-700 hover:bg-gray-600 active:bg-gray-500'
-                              : 'bg-gray-600 text-white hover:bg-gray-500 active:bg-gray-400'
+                              : 'bg-green-900 text-white hover:bg-green-800 active:bg-green-700'
                           }`}
                           aria-label={isPurchased ? 'Mark as pending (undo)' : 'Mark as purchased'}
                         >
