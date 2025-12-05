@@ -209,24 +209,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-        <header className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">HarvestHub</h1>
-              <p className="text-gray-600">Your grocery shopping companion</p>
-            </div>
-            {items.length === 0 && (
-              <button
-                onClick={loadSampleData}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium"
-              >
-                Load Sample Data
-              </button>
-            )}
+    <div className="min-h-screen">
+      <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+        {items.length === 0 && (
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={loadSampleData}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+            >
+              Load Sample Data
+            </button>
           </div>
-        </header>
+        )}
 
         <div className="space-y-6">
           <section>
