@@ -7,9 +7,20 @@ interface GroceryListProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onStatusChange: (id: string, status: GroceryItem['status']) => void;
+  selectedItems?: Set<string>;
+  onToggleSelection?: (id: string) => void;
+  bulkMode?: boolean;
 }
 
-export function GroceryList({ items, onEdit, onDelete, onStatusChange }: GroceryListProps) {
+export function GroceryList({
+  items,
+  onEdit,
+  onDelete,
+  onStatusChange,
+  selectedItems,
+  onToggleSelection,
+  bulkMode = false
+}: GroceryListProps) {
   if (items.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500">
@@ -27,6 +38,16 @@ export function GroceryList({ items, onEdit, onDelete, onStatusChange }: Grocery
           className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="flex items-start justify-between gap-4">
+            {bulkMode && onToggleSelection && (
+              <div className="flex items-center pt-1">
+                <input
+                  type="checkbox"
+                  checked={selectedItems?.has(item.id) || false}
+                  onChange={() => onToggleSelection(item.id)}
+                  className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                />
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-2 mb-1">
                 <h3 className="text-lg font-medium text-gray-900 truncate">
