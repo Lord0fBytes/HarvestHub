@@ -83,7 +83,7 @@ export default function PlanningPage() {
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-200">
+                <div className="divide-y divide-gray-100">
                   {filteredItems.map((item) => (
                     <div
                       key={item.id}
