@@ -5,7 +5,7 @@ export interface GroceryItem {
   name: string;
   quantity: number;
   unit: string;
-  status: ItemStatus;
+  status: ItemStatus | null;
   store?: string;
   aisle?: string;
   tags: string[];

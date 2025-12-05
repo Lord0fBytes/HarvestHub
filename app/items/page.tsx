@@ -76,7 +76,11 @@ export default function Home() {
 
     // Filter by status
     if (selectedStatus) {
-      filtered = filtered.filter(item => item.status === selectedStatus);
+      if (selectedStatus === 'null') {
+        filtered = filtered.filter(item => item.status === null);
+      } else {
+        filtered = filtered.filter(item => item.status === selectedStatus);
+      }
     }
 
     // Sort items
@@ -104,19 +108,19 @@ export default function Home() {
 
   const loadSampleData = async () => {
     const sampleItems: CreateGroceryItemInput[] = [
-      { name: 'Bananas', quantity: 3, unit: 'bunch', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
-      { name: 'Milk', quantity: 1, unit: 'gallon', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'beverages'] },
+      { name: 'Bananas', quantity: 3, unit: 'bunch', status: null, store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
+      { name: 'Milk', quantity: 1, unit: 'gallon', status: null, store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'beverages'] },
       { name: 'Bread', quantity: 2, unit: 'loaf', status: 'purchased', store: 'Trader Joe\'s', aisle: 'Bakery', tags: ['bakery', 'grains'] },
       { name: 'Chicken Breast', quantity: 2, unit: 'lb', status: 'pending', store: 'Costco', aisle: 'Meat', tags: ['protein', 'meat'] },
-      { name: 'Apples', quantity: 5, unit: 'count', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
+      { name: 'Apples', quantity: 5, unit: 'count', status: null, store: 'Costco', aisle: 'Produce', tags: ['fruit', 'produce'] },
       { name: 'Eggs', quantity: 2, unit: 'dozen', status: 'skipped', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'protein'] },
       { name: 'Greek Yogurt', quantity: 6, unit: 'count', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'breakfast'] },
-      { name: 'Baby Spinach', quantity: 1, unit: 'bag', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
+      { name: 'Baby Spinach', quantity: 1, unit: 'bag', status: null, store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
       { name: 'Olive Oil', quantity: 1, unit: 'bottle', status: 'purchased', store: 'Costco', aisle: 'Aisle 12', tags: ['pantry', 'cooking'] },
-      { name: 'Pasta', quantity: 3, unit: 'box', status: 'pending', store: 'Trader Joe\'s', aisle: 'Aisle 5', tags: ['pantry', 'grains'] },
-      { name: 'Tomatoes', quantity: 6, unit: 'count', status: 'pending', store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
-      { name: 'Cheese', quantity: 1, unit: 'lb', status: 'pending', store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'cheese'] },
-      { name: 'Rotisserie Chicken', quantity: 1, unit: 'count', status: 'pending', store: 'Costco', aisle: 'Deli', tags: ['protein', 'prepared'] },
+      { name: 'Pasta', quantity: 3, unit: 'box', status: null, store: 'Trader Joe\'s', aisle: 'Aisle 5', tags: ['pantry', 'grains'] },
+      { name: 'Tomatoes', quantity: 6, unit: 'count', status: null, store: 'Costco', aisle: 'Produce', tags: ['vegetables', 'produce'] },
+      { name: 'Cheese', quantity: 1, unit: 'lb', status: null, store: 'Trader Joe\'s', aisle: 'Dairy', tags: ['dairy', 'cheese'] },
+      { name: 'Rotisserie Chicken', quantity: 1, unit: 'count', status: null, store: 'Costco', aisle: 'Deli', tags: ['protein', 'prepared'] },
     ];
 
     await Promise.all(sampleItems.map(item => addItem(item)));
@@ -375,6 +379,7 @@ export default function Home() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                       >
                         <option value="">All Statuses</option>
+                        <option value="null">None</option>
                         <option value="pending">Pending</option>
                         <option value="purchased">Purchased</option>
                         <option value="skipped">Skipped</option>

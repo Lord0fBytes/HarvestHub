@@ -105,7 +105,7 @@ export default function PlanningPage() {
                             ? 'bg-gray-100 cursor-not-allowed'
                             : 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
                         }`}
-                        aria-label="Add to shopping list"
+                        aria-label={item.status === 'pending' ? 'Already on shopping list' : 'Add to shopping list'}
                       >
                         {item.status === 'pending' ? (
                           <span className="text-2xl">📄</span>

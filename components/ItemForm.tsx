@@ -14,7 +14,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
   const [name, setName] = useState(initialData?.name || '');
   const [quantity, setQuantity] = useState(initialData?.quantity.toString() || '1');
   const [unit, setUnit] = useState(initialData?.unit || 'count');
-  const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status || 'pending');
+  const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status ?? null);
   const [store, setStore] = useState(initialData?.store || '');
   const [aisle, setAisle] = useState(initialData?.aisle || '');
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
@@ -232,10 +232,11 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
             </label>
             <select
               id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as GroceryItem['status'])}
+              value={status ?? ''}
+              onChange={(e) => setStatus(e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             >
+              <option value="">None</option>
               <option value="pending">Pending</option>
               <option value="purchased">Purchased</option>
               <option value="skipped">Skipped</option>

@@ -59,10 +59,12 @@ export function GroceryList({
                       ? 'bg-green-100 text-green-800'
                       : item.status === 'skipped'
                       ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-gray-100 text-gray-800'
+                      : item.status === 'pending'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-gray-100 text-gray-600'
                   }`}
                 >
-                  {item.status}
+                  {item.status ?? 'none'}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-1">
@@ -91,10 +93,11 @@ export function GroceryList({
 
             <div className="flex gap-2">
               <select
-                value={item.status}
-                onChange={(e) => onStatusChange(item.id, e.target.value as GroceryItem['status'])}
+                value={item.status ?? ''}
+                onChange={(e) => onStatusChange(item.id, e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
                 className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
               >
+                <option value="">None</option>
                 <option value="pending">Pending</option>
                 <option value="purchased">Purchased</option>
                 <option value="skipped">Skipped</option>
