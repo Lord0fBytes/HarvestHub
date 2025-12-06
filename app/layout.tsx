@@ -31,14 +31,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <GroceryItemsProvider>
+          {/* Mobile Header - Mobile only */}
+          <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 border-b border-gray-700 flex items-center justify-center z-50">
+            <h1 className="text-2xl font-bold text-green-500">HarvestHub</h1>
+          </header>
+
           <div className="flex min-h-screen bg-gray-900">
             {/* Sidebar - Desktop only */}
             <Sidebar />
-
-            {/* Mobile Header - Mobile only */}
-            <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 border-b border-gray-700 flex items-center justify-center z-40">
-              <h1 className="text-2xl font-bold text-green-500">HarvestHub</h1>
-            </header>
 
             {/* Main Content */}
             <main className="flex-1 md:ml-64 pt-16 md:pt-0 pb-16 md:pb-0">
