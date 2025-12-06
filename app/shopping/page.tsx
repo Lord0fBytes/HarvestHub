@@ -37,7 +37,7 @@ export default function ShoppingPage() {
       if (aHasAisle && !bHasAisle) return -1;
 
       // Both have aisles - sort numerically
-      if (aHasAisle && bHasAisle) {
+      if (aHasAisle && bHasAisle && a.aisle && b.aisle) {
         // Convert to numbers for proper numeric sorting
         const aNum = typeof a.aisle === 'number' ? a.aisle : parseFloat(a.aisle);
         const bNum = typeof b.aisle === 'number' ? b.aisle : parseFloat(b.aisle);

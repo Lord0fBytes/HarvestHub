@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Sidebar } from "@/components/Sidebar";
 import { BottomNav } from "@/components/BottomNav";
+import { InstallPrompt } from "@/components/InstallPrompt";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { GroceryItemsProvider } from "@/contexts/GroceryItemsContext";
 import "./globals.css";
 
@@ -18,6 +20,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "HarvestHub - Your Grocery Shopping Companion",
   description: "A progressive web app for managing grocery lists with smart organization and offline support",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "HarvestHub",
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#10b981",
 };
 
 export default function RootLayout({
@@ -48,6 +64,12 @@ export default function RootLayout({
             {/* Bottom Navigation - Mobile only */}
             <BottomNav />
           </div>
+
+          {/* PWA Install Prompt */}
+          <InstallPrompt />
+
+          {/* Service Worker Registration */}
+          <ServiceWorkerRegistration />
         </GroceryItemsProvider>
       </body>
     </html>
