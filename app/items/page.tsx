@@ -238,8 +238,8 @@ export default function Home() {
 
         <div className="space-y-6">
           <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-semibold text-gray-100">
+            <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-3">
+              <h2 className="text-2xl font-semibold text-gray-100 text-center md:text-left">
                 Shopping List
               </h2>
               <div className="flex items-center gap-3">
