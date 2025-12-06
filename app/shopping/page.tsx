@@ -104,26 +104,24 @@ export default function ShoppingPage() {
                           isPurchased ? 'opacity-60' : ''
                         }`}
                       >
-                        {/* Item Info - Keep on single line */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 text-sm">
-                            <h3 className={`font-medium truncate ${
-                              isPurchased ? 'text-gray-400 line-through' : 'text-gray-100'
-                            }`}>
-                              {item.name}
-                            </h3>
-                            <span className="text-gray-400 whitespace-nowrap">
-                              {item.quantity} {item.unit}
-                            </span>
-                            {item.aisle && (
-                              <>
-                                <span className="text-gray-600">•</span>
-                                <span className="text-gray-400 whitespace-nowrap">
-                                  Aisle {item.aisle}
-                                </span>
-                              </>
-                            )}
-                          </div>
+                        {/* Item Info - Formatted in columns */}
+                        <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_auto] gap-3 items-center">
+                          {/* Column 1: Item Name */}
+                          <h3 className={`font-medium truncate ${
+                            isPurchased ? 'text-gray-400 line-through' : 'text-gray-100'
+                          }`}>
+                            {item.name}
+                          </h3>
+
+                          {/* Column 2: Quantity */}
+                          <span className="text-gray-400 whitespace-nowrap text-sm text-right min-w-[4rem]">
+                            {item.quantity} {item.unit}
+                          </span>
+
+                          {/* Column 3: Aisle */}
+                          <span className="text-gray-400 whitespace-nowrap text-sm text-right min-w-[4rem]">
+                            {item.aisle ? `Aisle ${item.aisle}` : '—'}
+                          </span>
                         </div>
 
                         {/* Shopping Cart or Dollar Sign Button */}
