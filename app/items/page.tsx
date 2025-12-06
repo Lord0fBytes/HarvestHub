@@ -238,12 +238,12 @@ export default function Home() {
 
         <div className="space-y-6">
           <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-semibold text-gray-900">
+            <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-3">
+              <h2 className="text-2xl font-semibold text-gray-100 text-center md:text-left">
                 Shopping List
               </h2>
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-400">
                   {filteredAndSortedItems.length} of {items.length} {items.length === 1 ? 'item' : 'items'}
                 </span>
                 {items.length > 0 && (
@@ -257,7 +257,7 @@ export default function Home() {
                     className={`text-sm px-3 py-1 rounded-md ${
                       selectedItems.size > 0
                         ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        : 'bg-gray-200 text-gray-300 hover:bg-gray-300'
                     }`}
                   >
                     {selectedItems.size > 0 ? `Cancel (${selectedItems.size} selected)` : 'Select Items'}
@@ -275,21 +275,21 @@ export default function Home() {
             {/* Statistics */}
             {items.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-                <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                  <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
-                  <div className="text-sm text-gray-600">Total Items</div>
+                <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-sm">
+                  <div className="text-2xl font-bold text-gray-100">{stats.total}</div>
+                  <div className="text-sm text-gray-400">Total Items</div>
                 </div>
-                <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                  <div className="text-2xl font-bold text-gray-600">{stats.pending}</div>
-                  <div className="text-sm text-gray-600">Pending</div>
+                <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-sm">
+                  <div className="text-2xl font-bold text-gray-400">{stats.pending}</div>
+                  <div className="text-sm text-gray-400">Pending</div>
                 </div>
-                <div className="bg-white rounded-lg border border-green-200 p-4 shadow-sm">
+                <div className="bg-gray-800 rounded-lg border border-green-200 p-4 shadow-sm">
                   <div className="text-2xl font-bold text-green-600">{stats.purchased}</div>
-                  <div className="text-sm text-gray-600">Purchased</div>
+                  <div className="text-sm text-gray-400">Purchased</div>
                 </div>
-                <div className="bg-white rounded-lg border border-yellow-200 p-4 shadow-sm">
+                <div className="bg-gray-800 rounded-lg border border-yellow-200 p-4 shadow-sm">
                   <div className="text-2xl font-bold text-yellow-600">{stats.skipped}</div>
-                  <div className="text-sm text-gray-600">Skipped</div>
+                  <div className="text-sm text-gray-400">Skipped</div>
                 </div>
               </div>
             )}
@@ -302,7 +302,7 @@ export default function Home() {
                   placeholder="Search items by name, store, aisle, or tags..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
+                  className="w-full px-4 py-3 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
                 />
               </div>
             )}
@@ -334,18 +334,18 @@ export default function Home() {
 
             {/* Filters and Sort */}
             {items.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm mb-4">
+              <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-sm mb-4">
                 <div className="space-y-4">
                   {/* Sort */}
                   <div>
-                    <label htmlFor="sort" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="sort" className="block text-sm font-medium text-gray-300 mb-2">
                       Sort by
                     </label>
                     <select
                       id="sort"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as SortOption)}
-                      className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full sm:w-auto px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="dateAdded">Date Added (Newest)</option>
                       <option value="name">Name (A-Z)</option>
@@ -357,14 +357,14 @@ export default function Home() {
                   {/* Type, Store, and Status Filters */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label htmlFor="type-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="type-filter" className="block text-sm font-medium text-gray-300 mb-2">
                         Filter by Type
                       </label>
                       <select
                         id="type-filter"
                         value={selectedType}
                         onChange={(e) => setSelectedType(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                       >
                         <option value="">All Types</option>
                         <option value="grocery">Grocery</option>
@@ -376,14 +376,14 @@ export default function Home() {
 
                     {allStores.length > 0 && (
                       <div>
-                        <label htmlFor="store-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="store-filter" className="block text-sm font-medium text-gray-300 mb-2">
                           Filter by Store
                         </label>
                         <select
                           id="store-filter"
                           value={selectedStore}
                           onChange={(e) => setSelectedStore(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                         >
                           <option value="">All Stores</option>
                           {allStores.map((store) => (
@@ -396,14 +396,14 @@ export default function Home() {
                     )}
 
                     <div>
-                      <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="status-filter" className="block text-sm font-medium text-gray-300 mb-2">
                         Filter by Status
                       </label>
                       <select
                         id="status-filter"
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                       >
                         <option value="">All Statuses</option>
                         <option value="null">None</option>
@@ -418,7 +418,7 @@ export default function Home() {
                   {allTags.length > 0 && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-300">
                           Filter by Tags
                         </label>
                         {(selectedTags.length > 0 || selectedStore || selectedType || selectedStatus || searchQuery) && (
@@ -459,9 +459,9 @@ export default function Home() {
                     type="checkbox"
                     checked={selectedItems.size === filteredAndSortedItems.length}
                     onChange={toggleAllItems}
-                    className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                    className="w-5 h-5 text-green-600 border-gray-700 rounded focus:ring-green-500"
                   />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-300">
                     Select All ({filteredAndSortedItems.length})
                   </span>
                 </label>

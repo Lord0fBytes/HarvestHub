@@ -12,9 +12,27 @@ export default function PlanningPage() {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle adding item to shopping list (set status to pending)
-  const handleAddToList = (itemId: string) => {
-    updateItem(itemId, { status: 'pending' });
+  // Handle increasing quantity
+  const handleIncreaseQuantity = (itemId: string, currentQuantity: number) => {
+    updateItem(itemId, {
+      quantity: currentQuantity + 1,
+      status: 'pending'
+    });
+  };
+
+  // Handle decreasing quantity
+  const handleDecreaseQuantity = (itemId: string, currentQuantity: number) => {
+    if (currentQuantity <= 1) {
+      // Set to 0 and remove from shopping list
+      updateItem(itemId, {
+        quantity: 0,
+        status: null
+      });
+    } else {
+      updateItem(itemId, {
+        quantity: currentQuantity - 1
+      });
+    }
   };
 
   return (
@@ -23,10 +41,10 @@ export default function PlanningPage() {
         <div className="space-y-6">
           {/* Header */}
           <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-2xl font-semibold text-gray-100 mb-4 text-center md:text-left">
               Planning
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-400 mb-6 text-center md:text-left">
               Build your shopping list by adding items you need
             </p>
 
@@ -38,10 +56,10 @@ export default function PlanningPage() {
                   placeholder="Search items..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 pl-10 border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
                 <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -57,11 +75,11 @@ export default function PlanningPage() {
             </div>
 
             {/* Items List */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-gray-800 rounded-lg border border-gray-700 shadow-sm">
               {filteredItems.length === 0 ? (
                 <div className="p-8 text-center">
                   <svg
-                    className="mx-auto h-12 w-12 text-gray-400 mb-4"
+                    className="mx-auto h-12 w-12 text-gray-600 mb-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -73,67 +91,116 @@ export default function PlanningPage() {
                       d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
                     />
                   </svg>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">
                     No items found
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-400">
                     {searchQuery
                       ? 'Try a different search term'
                       : 'Go to All Items to add items to your master list'}
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100">
-                  {filteredItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      {/* Item Name */}
-                      <div className="flex-1">
-                        <h3 className="text-base font-medium text-gray-900">
-                          {item.name}
-                        </h3>
-                      </div>
+                <div className="divide-y divide-gray-700">
+                  {filteredItems.map((item) => {
+                    const hasQuantity = item.quantity > 0 && item.status === 'pending';
 
-                      {/* Add Button */}
-                      <button
-                        onClick={() => handleAddToList(item.id)}
-                        disabled={item.status === 'pending'}
-                        className={`ml-4 flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                          item.status === 'pending'
-                            ? 'bg-gray-100 cursor-not-allowed'
-                            : 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
-                        }`}
-                        aria-label={item.status === 'pending' ? 'Already on shopping list' : 'Add to shopping list'}
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-4 hover:bg-gray-700 transition-colors"
                       >
-                        {item.status === 'pending' ? (
-                          <span className="text-2xl">📄</span>
-                        ) : (
-                          <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                  ))}
+                        {/* Item Name */}
+                        <div className="flex-1">
+                          <h3 className="text-base font-medium text-gray-100">
+                            {item.name}
+                          </h3>
+                        </div>
+
+                        {/* Quantity Controls */}
+                        <div className="ml-4 flex items-center gap-2">
+                          {hasQuantity ? (
+                            <>
+                              {/* Minus Button */}
+                              <button
+                                onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
+                                className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 text-white hover:bg-gray-600 active:bg-gray-500 transition-colors"
+                                aria-label="Decrease quantity"
+                              >
+                                <svg
+                                  className="w-6 h-6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M20 12H4"
+                                  />
+                                </svg>
+                              </button>
+
+                              {/* Quantity Display */}
+                              <span className="text-lg font-semibold text-gray-100 min-w-[2rem] text-center">
+                                {item.quantity}
+                              </span>
+
+                              {/* Plus Button */}
+                              <button
+                                onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
+                                className="flex items-center justify-center w-10 h-10 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
+                                aria-label="Increase quantity"
+                              >
+                                <svg
+                                  className="w-6 h-6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 4v16m8-8H4"
+                                  />
+                                </svg>
+                              </button>
+                            </>
+                          ) : (
+                            /* Plus Button Only (when quantity is 0 or status is null) */
+                            <button
+                              onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
+                              className="flex items-center justify-center w-10 h-10 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
+                              aria-label="Add to shopping list"
+                            >
+                              <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 4v16m8-8H4"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
             {/* Item Count */}
             {filteredItems.length > 0 && (
-              <div className="mt-4 text-sm text-gray-600 text-center">
+              <div className="mt-4 text-sm text-gray-400 text-center">
                 Showing {filteredItems.length} of {items.length} items
               </div>
             )}
