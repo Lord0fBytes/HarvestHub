@@ -131,15 +131,28 @@ export default function PlanningPage() {
                         key={item.id}
                         className="flex items-center justify-between p-4 hover:bg-gray-700 transition-colors"
                       >
-                        {/* Item Name */}
-                        <div className="flex-1">
+                        {/* Item Name and Tags */}
+                        <div className="flex-1 min-w-0">
                           <h3 className="text-base font-medium text-gray-100">
                             {item.name}
                           </h3>
+                          {/* Tags */}
+                          {item.tags && item.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {item.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-300"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
 
                         {/* Quantity Controls */}
-                        <div className="ml-4 flex items-center gap-2">
+                        <div className="ml-4 flex items-center gap-2 flex-shrink-0">
                           {hasQuantity ? (
                             <>
                               {/* Minus Button */}
