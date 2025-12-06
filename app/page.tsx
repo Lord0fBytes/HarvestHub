@@ -1,16 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
 
 export default function PlanningPage() {
   const { items, updateItem } = useGroceryItems();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter items based on search query
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort items
+  const filteredItems = useMemo(() => {
+    // First filter by search query
+    const filtered = items.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Then sort by tags (items with tags first, null/empty tags last)
+    return filtered.sort((a, b) => {
+      const aHasTags = a.tags && a.tags.length > 0;
+      const bHasTags = b.tags && b.tags.length > 0;
+
+      // Items without tags go to the bottom
+      if (!aHasTags && bHasTags) return 1;
+      if (aHasTags && !bHasTags) return -1;
+
+      // Both have tags - sort alphabetically by first tag
+      if (aHasTags && bHasTags) {
+        return a.tags[0].localeCompare(b.tags[0]);
+      }
+
+      // Both don't have tags - maintain original order
+      return 0;
+    });
+  }, [items, searchQuery]);
 
   // Handle increasing quantity
   const handleIncreaseQuantity = (itemId: string, currentQuantity: number) => {
