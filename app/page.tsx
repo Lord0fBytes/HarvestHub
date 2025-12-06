@@ -1,16 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
 
 export default function PlanningPage() {
   const { items, updateItem } = useGroceryItems();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter items based on search query
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort items
+  const filteredItems = useMemo(() => {
+    // First filter by search query
+    const filtered = items.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Then sort by tags (items with tags first, null/empty tags last)
+    return filtered.sort((a, b) => {
+      const aHasTags = a.tags && a.tags.length > 0;
+      const bHasTags = b.tags && b.tags.length > 0;
+
+      // Items without tags go to the bottom
+      if (!aHasTags && bHasTags) return 1;
+      if (aHasTags && !bHasTags) return -1;
+
+      // Both have tags - sort alphabetically by first tag
+      if (aHasTags && bHasTags) {
+        return a.tags[0].localeCompare(b.tags[0]);
+      }
+
+      // Both don't have tags - maintain original order
+      return 0;
+    });
+  }, [items, searchQuery]);
 
   // Handle increasing quantity
   const handleIncreaseQuantity = (itemId: string, currentQuantity: number) => {
@@ -110,15 +131,28 @@ export default function PlanningPage() {
                         key={item.id}
                         className="flex items-center justify-between p-4 hover:bg-gray-700 transition-colors"
                       >
-                        {/* Item Name */}
-                        <div className="flex-1">
+                        {/* Item Name and Tags */}
+                        <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
                           <h3 className="text-base font-medium text-gray-100">
                             {item.name}
                           </h3>
+                          {/* Tags */}
+                          {item.tags && item.tags.length > 0 && (
+                            <>
+                              {item.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-300"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </>
+                          )}
                         </div>
 
                         {/* Quantity Controls */}
-                        <div className="ml-4 flex items-center gap-2">
+                        <div className="ml-4 flex items-center gap-2 flex-shrink-0">
                           {hasQuantity ? (
                             <>
                               {/* Minus Button */}

@@ -7,9 +7,9 @@ export default function ShoppingPage() {
   const { items, updateItem } = useGroceryItems();
   const [selectedStore, setSelectedStore] = useState<string>('all');
 
-  // Get shopping items (pending and purchased)
+  // Get shopping items (pending, purchased, and skipped)
   const shoppingItems = items.filter(item =>
-    item.status === 'pending' || item.status === 'purchased'
+    item.status === 'pending' || item.status === 'purchased' || item.status === 'skipped'
   );
 
   // Get unique stores from shopping items
@@ -22,9 +22,32 @@ export default function ShoppingPage() {
   }, [shoppingItems]);
 
   // Filter items based on selected store
-  const filteredItems = selectedStore === 'all'
-    ? shoppingItems
-    : shoppingItems.filter(item => item.stores.includes(selectedStore));
+  const filteredItems = useMemo(() => {
+    const filtered = selectedStore === 'all'
+      ? shoppingItems
+      : shoppingItems.filter(item => item.stores.includes(selectedStore));
+
+    // Sort by aisle (items with aisle first, sorted numerically, then items without aisle)
+    return filtered.sort((a, b) => {
+      const aHasAisle = a.aisle !== null && a.aisle !== undefined && a.aisle !== '';
+      const bHasAisle = b.aisle !== null && b.aisle !== undefined && b.aisle !== '';
+
+      // Items without aisle go to the bottom
+      if (!aHasAisle && bHasAisle) return 1;
+      if (aHasAisle && !bHasAisle) return -1;
+
+      // Both have aisles - sort numerically
+      if (aHasAisle && bHasAisle && a.aisle && b.aisle) {
+        // Convert to numbers for proper numeric sorting
+        const aNum = typeof a.aisle === 'number' ? a.aisle : parseFloat(a.aisle);
+        const bNum = typeof b.aisle === 'number' ? b.aisle : parseFloat(b.aisle);
+        return aNum - bNum;
+      }
+
+      // Both don't have aisles - maintain original order
+      return 0;
+    });
+  }, [selectedStore, shoppingItems]);
 
   // Handle toggling item status
   const handleToggleStatus = (itemId: string, currentStatus: 'pending' | 'purchased') => {
@@ -32,6 +55,15 @@ export default function ShoppingPage() {
       updateItem(itemId, { status: 'purchased' });
     } else {
       updateItem(itemId, { status: 'pending' });
+    }
+  };
+
+  // Handle skipping item
+  const handleSkipItem = (itemId: string, currentStatus: 'pending' | 'purchased' | 'skipped') => {
+    if (currentStatus === 'skipped') {
+      updateItem(itemId, { status: 'pending' });
+    } else {
+      updateItem(itemId, { status: 'skipped' });
     }
   };
 
@@ -97,62 +129,46 @@ export default function ShoppingPage() {
                 <div className="divide-y divide-gray-700">
                   {filteredItems.map((item) => {
                     const isPurchased = item.status === 'purchased';
+                    const isSkipped = item.status === 'skipped';
                     return (
                       <div
                         key={item.id}
                         className={`flex items-center justify-between p-4 hover:bg-gray-700 transition-colors ${
-                          isPurchased ? 'opacity-60' : ''
+                          isPurchased || isSkipped ? 'opacity-60' : ''
                         }`}
                       >
-                        {/* Item Info - Keep on single line */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 text-sm">
-                            <h3 className={`font-medium truncate ${
-                              isPurchased ? 'text-gray-400 line-through' : 'text-gray-100'
-                            }`}>
-                              {item.name}
-                            </h3>
-                            <span className="text-gray-400 whitespace-nowrap">
-                              {item.quantity} {item.unit}
-                            </span>
-                            {item.aisle && (
-                              <>
-                                <span className="text-gray-600">•</span>
-                                <span className="text-gray-400 whitespace-nowrap">
-                                  Aisle {item.aisle}
-                                </span>
-                              </>
-                            )}
-                          </div>
+                        {/* Item Info - Formatted in columns */}
+                        <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_auto] gap-3 items-center">
+                          {/* Column 1: Item Name */}
+                          <h3 className={`font-medium truncate ${
+                            isPurchased ? 'text-gray-400 line-through' : isSkipped ? 'text-yellow-600 line-through' : 'text-gray-100'
+                          }`}>
+                            {item.name}
+                          </h3>
+
+                          {/* Column 2: Quantity */}
+                          <span className="text-gray-400 whitespace-nowrap text-sm text-right min-w-[4rem]">
+                            {item.quantity} {item.unit}
+                          </span>
+
+                          {/* Column 3: Aisle */}
+                          <span className="text-gray-400 whitespace-nowrap text-sm text-right min-w-[4rem]">
+                            {item.aisle ? `Aisle ${item.aisle}` : '—'}
+                          </span>
                         </div>
 
-                        {/* Shopping Cart or Dollar Sign Button */}
-                        <button
-                          onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
-                          className={`ml-4 flex items-center justify-center w-10 h-10 rounded-full transition-colors flex-shrink-0 ${
-                            isPurchased
-                              ? 'bg-gray-700 hover:bg-gray-600 active:bg-gray-500'
-                              : 'bg-green-900 text-white hover:bg-green-800 active:bg-green-700'
-                          }`}
-                          aria-label={isPurchased ? 'Mark as pending (undo)' : 'Mark as purchased'}
-                        >
-                          {isPurchased ? (
-                            // Dollar Sign Icon
-                            <svg
-                              className="w-5 h-5 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                          ) : (
-                            // Shopping Cart Icon
+                        {/* Action Buttons */}
+                        <div className="ml-4 flex items-center gap-2 flex-shrink-0">
+                          {/* Skip Button */}
+                          <button
+                            onClick={() => handleSkipItem(item.id, item.status as 'pending' | 'purchased' | 'skipped')}
+                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+                              isSkipped
+                                ? 'bg-yellow-900 text-yellow-400 hover:bg-yellow-800 active:bg-yellow-700'
+                                : 'bg-gray-700 text-gray-400 hover:bg-gray-600 active:bg-gray-500'
+                            }`}
+                            aria-label={isSkipped ? 'Unskip item' : 'Skip item'}
+                          >
                             <svg
                               className="w-5 h-5"
                               fill="none"
@@ -163,11 +179,54 @@ export default function ShoppingPage() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={2}
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                                d="M6 18L18 6M6 6l12 12"
                               />
                             </svg>
-                          )}
-                        </button>
+                          </button>
+
+                          {/* Purchase Button */}
+                          <button
+                            onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
+                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+                              isPurchased
+                                ? 'bg-gray-700 hover:bg-gray-600 active:bg-gray-500'
+                                : 'bg-green-900 text-white hover:bg-green-800 active:bg-green-700'
+                            }`}
+                            aria-label={isPurchased ? 'Mark as pending (undo)' : 'Mark as purchased'}
+                          >
+                            {isPurchased ? (
+                              // Dollar Sign Icon
+                              <svg
+                                className="w-5 h-5 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                            ) : (
+                              // Shopping Cart Icon
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                                />
+                              </svg>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
