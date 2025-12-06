@@ -54,7 +54,7 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:w-64 md:bg-gray-800 md:border-r md:border-gray-700">
       {/* Logo/Brand */}
-      <div className="flex items-center h-16 px-6 border-b border-gray-700">
+      <div className="flex items-center justify-center h-16 px-6 border-b border-gray-700">
         <h1 className="text-2xl font-bold text-green-500">HarvestHub</h1>
       </div>
 
