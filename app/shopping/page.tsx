@@ -22,9 +22,32 @@ export default function ShoppingPage() {
   }, [shoppingItems]);
 
   // Filter items based on selected store
-  const filteredItems = selectedStore === 'all'
-    ? shoppingItems
-    : shoppingItems.filter(item => item.stores.includes(selectedStore));
+  const filteredItems = useMemo(() => {
+    const filtered = selectedStore === 'all'
+      ? shoppingItems
+      : shoppingItems.filter(item => item.stores.includes(selectedStore));
+
+    // Sort by aisle (items with aisle first, sorted numerically, then items without aisle)
+    return filtered.sort((a, b) => {
+      const aHasAisle = a.aisle !== null && a.aisle !== undefined && a.aisle !== '';
+      const bHasAisle = b.aisle !== null && b.aisle !== undefined && b.aisle !== '';
+
+      // Items without aisle go to the bottom
+      if (!aHasAisle && bHasAisle) return 1;
+      if (aHasAisle && !bHasAisle) return -1;
+
+      // Both have aisles - sort numerically
+      if (aHasAisle && bHasAisle) {
+        // Convert to numbers for proper numeric sorting
+        const aNum = typeof a.aisle === 'number' ? a.aisle : parseFloat(a.aisle);
+        const bNum = typeof b.aisle === 'number' ? b.aisle : parseFloat(b.aisle);
+        return aNum - bNum;
+      }
+
+      // Both don't have aisles - maintain original order
+      return 0;
+    });
+  }, [selectedStore, shoppingItems]);
 
   // Handle toggling item status
   const handleToggleStatus = (itemId: string, currentStatus: 'pending' | 'purchased') => {
