@@ -132,13 +132,13 @@ export default function PlanningPage() {
                         className="flex items-center justify-between p-4 hover:bg-gray-700 transition-colors"
                       >
                         {/* Item Name and Tags */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
                           <h3 className="text-base font-medium text-gray-100">
                             {item.name}
                           </h3>
                           {/* Tags */}
                           {item.tags && item.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-1">
+                            <>
                               {item.tags.map((tag) => (
                                 <span
                                   key={tag}
@@ -147,7 +147,7 @@ export default function PlanningPage() {
                                   {tag}
                                 </span>
                               ))}
-                            </div>
+                            </>
                           )}
                         </div>
 
