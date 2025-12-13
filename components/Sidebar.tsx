@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ServerStatus } from './ServerStatus';
 
 interface NavItem {
   name: string;
@@ -80,7 +81,8 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-700">
+      <div className="p-4 border-t border-gray-700 space-y-2">
+        <ServerStatus />
         <p className="text-xs text-gray-400 text-center">
           Your grocery shopping companion
         </p>
