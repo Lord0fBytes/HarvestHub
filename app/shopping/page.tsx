@@ -7,9 +7,9 @@ export default function ShoppingPage() {
   const { items, updateItem } = useGroceryItems();
   const [selectedStore, setSelectedStore] = useState<string>('all');
 
-  // Get shopping items (pending, purchased, and skipped)
+  // Get shopping items (pending and purchased)
   const shoppingItems = items.filter(item =>
-    item.status === 'pending' || item.status === 'purchased' || item.status === 'skipped'
+    item.status === 'pending' || item.status === 'purchased'
   );
 
   // Get unique stores from shopping items
@@ -27,7 +27,7 @@ export default function ShoppingPage() {
       ? shoppingItems
       : shoppingItems.filter(item => item.stores.includes(selectedStore));
 
-    // Sort by aisle (items with aisle first, sorted numerically, then items without aisle)
+    // Sort by aisle first, then alphabetically by name (case insensitive)
     return filtered.sort((a, b) => {
       const aHasAisle = a.aisle !== null && a.aisle !== undefined && a.aisle !== '';
       const bHasAisle = b.aisle !== null && b.aisle !== undefined && b.aisle !== '';
@@ -36,16 +36,57 @@ export default function ShoppingPage() {
       if (!aHasAisle && bHasAisle) return 1;
       if (aHasAisle && !bHasAisle) return -1;
 
-      // Both have aisles - sort numerically
+      // Both have aisles - sort by aisle
       if (aHasAisle && bHasAisle && a.aisle && b.aisle) {
-        // Convert to numbers for proper numeric sorting
-        const aNum = typeof a.aisle === 'number' ? a.aisle : parseFloat(a.aisle);
-        const bNum = typeof b.aisle === 'number' ? b.aisle : parseFloat(b.aisle);
-        return aNum - bNum;
+        // Check if aisle contains emoji (characters outside basic ASCII range)
+        const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
+        const aHasEmoji = emojiRegex.test(a.aisle);
+        const bHasEmoji = emojiRegex.test(b.aisle);
+
+        // Try to parse as numbers
+        const aNum = parseFloat(a.aisle);
+        const bNum = parseFloat(b.aisle);
+        const aIsNum = !isNaN(aNum);
+        const bIsNum = !isNaN(bNum);
+
+        // Both have emojis - sort alphabetically by aisle, then by name
+        if (aHasEmoji && bHasEmoji) {
+          const aisleCompare = a.aisle.toLowerCase().localeCompare(b.aisle.toLowerCase());
+          if (aisleCompare !== 0) {
+            return aisleCompare;
+          }
+          return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+        }
+
+        // One has emoji, one doesn't - emoji first
+        if (aHasEmoji && !bHasEmoji) return -1;
+        if (!aHasEmoji && bHasEmoji) return 1;
+
+        // Both are numbers - sort numerically
+        if (aIsNum && bIsNum) {
+          if (aNum !== bNum) {
+            return aNum - bNum;
+          }
+          // Same aisle number - sort alphabetically by name
+          return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+        }
+
+        // Both are text - sort alphabetically by aisle, then by name
+        if (!aIsNum && !bIsNum) {
+          const aisleCompare = a.aisle.toLowerCase().localeCompare(b.aisle.toLowerCase());
+          if (aisleCompare !== 0) {
+            return aisleCompare;
+          }
+          // Same aisle text - sort alphabetically by name
+          return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+        }
+
+        // One is number, one is text - numbers first
+        return aIsNum ? -1 : 1;
       }
 
-      // Both don't have aisles - maintain original order
-      return 0;
+      // Both don't have aisles - sort alphabetically by name (case insensitive)
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
     });
   }, [selectedStore, shoppingItems]);
 
@@ -55,15 +96,6 @@ export default function ShoppingPage() {
       updateItem(itemId, { status: 'purchased' });
     } else {
       updateItem(itemId, { status: 'pending' });
-    }
-  };
-
-  // Handle skipping item
-  const handleSkipItem = (itemId: string, currentStatus: 'pending' | 'purchased' | 'skipped') => {
-    if (currentStatus === 'skipped') {
-      updateItem(itemId, { status: 'pending' });
-    } else {
-      updateItem(itemId, { status: 'skipped' });
     }
   };
 
@@ -126,64 +158,57 @@ export default function ShoppingPage() {
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-700">
-                  {filteredItems.map((item) => {
+                <>
+                  {/* Column Headers */}
+                  <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-600">
+                    <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_auto] gap-3 items-center">
+                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                        Item
+                      </span>
+                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide text-right min-w-[4rem]">
+                        Qty
+                      </span>
+                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide text-center min-w-[4rem]">
+                        Aisle
+                      </span>
+                    </div>
+                    {/* Spacer for action button */}
+                    <div className="ml-4 w-10 flex-shrink-0"></div>
+                  </div>
+
+                  {/* Items List */}
+                  <div className="divide-y divide-gray-700">
+                    {filteredItems.map((item) => {
                     const isPurchased = item.status === 'purchased';
-                    const isSkipped = item.status === 'skipped';
                     return (
                       <div
                         key={item.id}
                         className={`flex items-center justify-between p-4 hover:bg-gray-700 transition-colors ${
-                          isPurchased || isSkipped ? 'opacity-60' : ''
+                          isPurchased ? 'opacity-60' : ''
                         }`}
                       >
                         {/* Item Info - Formatted in columns */}
                         <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_auto] gap-3 items-center">
                           {/* Column 1: Item Name */}
-                          <h3 className={`font-medium truncate ${
-                            isPurchased ? 'text-gray-400 line-through' : isSkipped ? 'text-yellow-600 line-through' : 'text-gray-100'
+                          <h3 className={`font-semibold text-base ${
+                            isPurchased ? 'text-gray-400 line-through' : 'text-white'
                           }`}>
                             {item.name}
                           </h3>
 
                           {/* Column 2: Quantity */}
-                          <span className="text-gray-400 whitespace-nowrap text-sm text-right min-w-[4rem]">
+                          <span className="text-gray-300 font-medium whitespace-nowrap text-sm text-right min-w-[4rem]">
                             {item.quantity} {item.unit}
                           </span>
 
                           {/* Column 3: Aisle */}
-                          <span className="text-gray-400 whitespace-nowrap text-sm text-right min-w-[4rem]">
-                            {item.aisle ? `Aisle ${item.aisle}` : '—'}
+                          <span className="text-gray-300 font-semibold whitespace-nowrap text-sm text-center min-w-[4rem]">
+                            {item.aisle ? item.aisle : '—'}
                           </span>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="ml-4 flex items-center gap-2 flex-shrink-0">
-                          {/* Skip Button */}
-                          <button
-                            onClick={() => handleSkipItem(item.id, item.status as 'pending' | 'purchased' | 'skipped')}
-                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                              isSkipped
-                                ? 'bg-yellow-900 text-yellow-400 hover:bg-yellow-800 active:bg-yellow-700'
-                                : 'bg-gray-700 text-gray-400 hover:bg-gray-600 active:bg-gray-500'
-                            }`}
-                            aria-label={isSkipped ? 'Unskip item' : 'Skip item'}
-                          >
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-
+                        <div className="ml-4 flex items-center flex-shrink-0">
                           {/* Purchase Button */}
                           <button
                             onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
@@ -230,7 +255,8 @@ export default function ShoppingPage() {
                       </div>
                     );
                   })}
-                </div>
+                  </div>
+                </>
               )}
             </div>
 

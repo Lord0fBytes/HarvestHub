@@ -9,12 +9,17 @@ export default function PlanningPage() {
 
   // Filter and sort items
   const filteredItems = useMemo(() => {
-    // First filter by search query
-    const filtered = items.filter(item =>
+    // First filter by status (only show null and pending items)
+    const statusFiltered = items.filter(item =>
+      item.status === null || item.status === 'pending'
+    );
+
+    // Then filter by search query
+    const filtered = statusFiltered.filter(item =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Then sort by tags (items with tags first, null/empty tags last)
+    // Sort first by tag, then by name alphabetically
     return filtered.sort((a, b) => {
       const aHasTags = a.tags && a.tags.length > 0;
       const bHasTags = b.tags && b.tags.length > 0;
@@ -23,13 +28,18 @@ export default function PlanningPage() {
       if (!aHasTags && bHasTags) return 1;
       if (aHasTags && !bHasTags) return -1;
 
-      // Both have tags - sort alphabetically by first tag
+      // Both have tags - sort alphabetically by first tag, then by name
       if (aHasTags && bHasTags) {
-        return a.tags[0].localeCompare(b.tags[0]);
+        const tagComparison = a.tags[0].localeCompare(b.tags[0]);
+        // If tags are the same, sort by name
+        if (tagComparison === 0) {
+          return a.name.localeCompare(b.name);
+        }
+        return tagComparison;
       }
 
-      // Both don't have tags - maintain original order
-      return 0;
+      // Both don't have tags - sort by name
+      return a.name.localeCompare(b.name);
     });
   }, [items, searchQuery]);
 
@@ -122,47 +132,62 @@ export default function PlanningPage() {
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-700">
+                <>
+                  {/* Column Headers */}
+                  <div className="px-4 py-3 bg-gray-800 border-b border-gray-600">
+                    <div className="grid grid-cols-[2fr_1fr_auto] gap-3 items-center">
+                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                        Item
+                      </span>
+                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                        Tags
+                      </span>
+                      <div className="w-28"></div>
+                    </div>
+                  </div>
+
+                  {/* Items List */}
+                  <div className="divide-y divide-gray-700">
                   {filteredItems.map((item) => {
                     const hasQuantity = item.quantity > 0 && item.status === 'pending';
 
                     return (
                       <div
                         key={item.id}
-                        className="flex items-center justify-between p-4 hover:bg-gray-700 transition-colors"
+                        className="p-4 hover:bg-gray-700 transition-colors"
                       >
-                        {/* Item Name and Tags */}
-                        <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
-                          <h3 className="text-base font-medium text-gray-100">
+                        <div className="grid grid-cols-[2fr_1fr_auto] gap-3 items-center">
+                          {/* Item Name */}
+                          <h3 className="text-base font-semibold text-white truncate">
                             {item.name}
                           </h3>
-                          {/* Tags */}
-                          {item.tags && item.tags.length > 0 && (
-                            <>
-                              {item.tags.map((tag) => (
+
+                          {/* Tags Column */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {item.tags && item.tags.length > 0 ? (
+                              item.tags.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-300"
+                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-300 whitespace-nowrap"
                                 >
                                   {tag}
                                 </span>
-                              ))}
-                            </>
-                          )}
-                        </div>
+                              ))
+                            ) : null}
+                          </div>
 
-                        {/* Quantity Controls */}
-                        <div className="ml-4 flex items-center gap-2 flex-shrink-0">
+                          {/* Quantity Controls */}
+                          <div className="flex items-center gap-1.5 justify-end w-28">
                           {hasQuantity ? (
                             <>
                               {/* Minus Button */}
                               <button
                                 onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
-                                className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 text-white hover:bg-gray-600 active:bg-gray-500 transition-colors"
+                                className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-700 text-white hover:bg-gray-600 active:bg-gray-500 transition-colors"
                                 aria-label="Decrease quantity"
                               >
                                 <svg
-                                  className="w-6 h-6"
+                                  className="w-5 h-5"
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
@@ -177,18 +202,18 @@ export default function PlanningPage() {
                               </button>
 
                               {/* Quantity Display */}
-                              <span className="text-lg font-semibold text-gray-100 min-w-[2rem] text-center">
+                              <span className="text-base font-semibold text-gray-100 min-w-[1.5rem] text-center">
                                 {item.quantity}
                               </span>
 
                               {/* Plus Button */}
                               <button
                                 onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
-                                className="flex items-center justify-center w-10 h-10 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
+                                className="flex items-center justify-center w-9 h-9 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
                                 aria-label="Increase quantity"
                               >
                                 <svg
-                                  className="w-6 h-6"
+                                  className="w-5 h-5"
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
@@ -206,11 +231,11 @@ export default function PlanningPage() {
                             /* Plus Button Only (when quantity is 0 or status is null) */
                             <button
                               onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
-                              className="flex items-center justify-center w-10 h-10 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
+                              className="flex items-center justify-center w-9 h-9 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
                               aria-label="Add to shopping list"
                             >
                               <svg
-                                className="w-6 h-6"
+                                className="w-5 h-5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -225,10 +250,12 @@ export default function PlanningPage() {
                             </button>
                           )}
                         </div>
+                        </div>
                       </div>
                     );
                   })}
-                </div>
+                  </div>
+                </>
               )}
             </div>
 

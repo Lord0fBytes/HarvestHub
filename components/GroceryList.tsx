@@ -50,7 +50,7 @@ export function GroceryList({
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-2 mb-1">
-                <h3 className="text-lg font-medium text-gray-100 truncate">
+                <h3 className="text-lg font-semibold text-white truncate">
                   {item.name}
                 </h3>
                 <span
@@ -80,7 +80,7 @@ export function GroceryList({
                   {item.type}
                 </span>
               </div>
-              <p className="text-sm text-gray-400 mb-1">
+              <p className="text-sm text-gray-300 font-medium mb-1">
                 {item.quantity} {item.unit}
               </p>
               {(item.stores.length > 0 || item.aisle) && (
@@ -101,7 +101,7 @@ export function GroceryList({
                     <span className="text-gray-400 text-xs">•</span>
                   )}
                   {item.aisle && (
-                    <span className="text-sm text-gray-500">{item.aisle}</span>
+                    <span className="text-sm text-gray-300 font-semibold">{item.aisle}</span>
                   )}
                 </div>
               )}
