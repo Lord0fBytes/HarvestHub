@@ -1,11 +1,20 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
 
 export default function ShoppingPage() {
   const { items, updateItem } = useGroceryItems();
   const [selectedStore, setSelectedStore] = useState<string>('all');
+  const [swipedItemId, setSwipedItemId] = useState<string | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const touchStartX = useRef(0);
+  const touchCurrentX = useRef(0);
+
+  useEffect(() => {
+    // Detect if device supports touch
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   // Get shopping items (pending and purchased)
   const shoppingItems = items.filter(item =>
@@ -99,6 +108,41 @@ export default function ShoppingPage() {
     }
   };
 
+  // Handle skipping item
+  const handleSkipItem = (itemId: string) => {
+    updateItem(itemId, { status: 'skipped' });
+    setSwipedItemId(null);
+  };
+
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent, itemId: string) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent, itemId: string) => {
+    touchCurrentX.current = e.touches[0].clientX;
+    const diff = touchStartX.current - touchCurrentX.current;
+
+    // Only allow left swipe (positive diff)
+    if (diff > 10) {
+      setSwipedItemId(itemId);
+    } else if (diff < -10) {
+      setSwipedItemId(null);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent, itemId: string) => {
+    const diff = touchStartX.current - touchCurrentX.current;
+
+    // If swiped more than 80px, keep it open, otherwise close
+    if (diff > 80) {
+      setSwipedItemId(itemId);
+    } else {
+      setSwipedItemId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -180,13 +224,33 @@ export default function ShoppingPage() {
                   <div className="divide-y divide-gray-700">
                     {filteredItems.map((item) => {
                     const isPurchased = item.status === 'purchased';
+                    const isItemSwiped = swipedItemId === item.id;
                     return (
                       <div
                         key={item.id}
-                        className={`flex items-center justify-between p-4 hover:bg-gray-700 transition-colors ${
-                          isPurchased ? 'opacity-60' : ''
-                        }`}
+                        className="overflow-hidden relative"
                       >
+                        {/* Skip button revealed on swipe (mobile only) - only for pending items */}
+                        {isTouchDevice && !isPurchased && (
+                          <div className="absolute right-0 top-0 bottom-0 flex bg-gray-700 w-1/4">
+                            <button
+                              onClick={() => handleSkipItem(item.id)}
+                              className="h-full w-full bg-yellow-600 text-white font-medium flex items-center justify-center"
+                            >
+                              Skip
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Main content that slides */}
+                        <div
+                          className={`relative flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-700 transition-all duration-200 ease-out ${
+                            isPurchased ? 'opacity-60' : ''
+                          } ${isItemSwiped ? '-translate-x-[25%]' : 'translate-x-0'}`}
+                          onTouchStart={(e) => handleTouchStart(e, item.id)}
+                          onTouchMove={(e) => handleTouchMove(e, item.id)}
+                          onTouchEnd={(e) => handleTouchEnd(e, item.id)}
+                        >
                         {/* Item Info - Formatted in columns */}
                         <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_auto] gap-3 items-center">
                           {/* Column 1: Item Name */}
@@ -208,7 +272,7 @@ export default function ShoppingPage() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="ml-4 flex items-center flex-shrink-0">
+                        <div className="ml-4 flex items-center gap-2 flex-shrink-0">
                           {/* Purchase Button */}
                           <button
                             onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
@@ -253,8 +317,9 @@ export default function ShoppingPage() {
                           </button>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  );
+                })}
                   </div>
                 </>
               )}
