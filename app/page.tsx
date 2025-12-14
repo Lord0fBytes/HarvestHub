@@ -1,11 +1,25 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
+import { Modal } from '@/components/Modal';
+import { ItemForm } from '@/components/ItemForm';
+import { CreateGroceryItemInput } from '@/types/grocery';
 
 export default function PlanningPage() {
   const { items, updateItem } = useGroceryItems();
   const [searchQuery, setSearchQuery] = useState('');
+  const [swipedItemId, setSwipedItemId] = useState<string | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const touchStartX = useRef(0);
+  const touchCurrentX = useRef(0);
+
+  useEffect(() => {
+    // Detect if device supports touch
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   // Filter and sort items
   const filteredItems = useMemo(() => {
@@ -65,6 +79,57 @@ export default function PlanningPage() {
       });
     }
   };
+
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent, itemId: string) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent, itemId: string) => {
+    touchCurrentX.current = e.touches[0].clientX;
+    const diff = touchStartX.current - touchCurrentX.current;
+
+    // Only allow left swipe (positive diff)
+    if (diff > 10) {
+      setSwipedItemId(itemId);
+    } else if (diff < -10) {
+      setSwipedItemId(null);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent, itemId: string) => {
+    const diff = touchStartX.current - touchCurrentX.current;
+
+    // If swiped more than 80px, keep it open, otherwise close
+    if (diff > 80) {
+      setSwipedItemId(itemId);
+    } else {
+      setSwipedItemId(null);
+    }
+  };
+
+  // Edit handlers
+  const handleOpenEditModal = (id: string) => {
+    setEditingId(id);
+    setIsModalOpen(true);
+    setSwipedItemId(null);
+  };
+
+  const handleEditItem = (input: CreateGroceryItemInput) => {
+    if (editingId) {
+      updateItem(editingId, input);
+      setEditingId(null);
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setIsModalOpen(false);
+  };
+
+  const editingItem = editingId ? items.find(item => item.id === editingId) : null;
 
   return (
     <div className="min-h-screen">
@@ -150,12 +215,34 @@ export default function PlanningPage() {
                   <div className="divide-y divide-gray-700">
                   {filteredItems.map((item) => {
                     const hasQuantity = item.quantity > 0 && item.status === 'pending';
+                    const isItemSwiped = swipedItemId === item.id;
 
                     return (
                       <div
                         key={item.id}
-                        className="p-4 hover:bg-gray-700 transition-colors"
+                        className="overflow-hidden relative"
                       >
+                        {/* Edit button revealed on swipe (mobile only) */}
+                        {isTouchDevice && (
+                          <div className="absolute right-0 top-0 bottom-0 flex bg-gray-700 w-1/4">
+                            <button
+                              onClick={() => handleOpenEditModal(item.id)}
+                              className="h-full w-full bg-blue-600 text-white font-medium flex items-center justify-center"
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Main content that slides */}
+                        <div
+                          className={`p-4 bg-gray-800 hover:bg-gray-700 transition-all duration-200 ease-out ${
+                            isItemSwiped ? '-translate-x-[25%]' : 'translate-x-0'
+                          }`}
+                          onTouchStart={(e) => handleTouchStart(e, item.id)}
+                          onTouchMove={(e) => handleTouchMove(e, item.id)}
+                          onTouchEnd={(e) => handleTouchEnd(e, item.id)}
+                        >
                         <div className="grid grid-cols-[2fr_1fr_auto] gap-3 items-center">
                           {/* Item Name */}
                           <h3 className="text-base font-semibold text-white truncate">
@@ -251,6 +338,7 @@ export default function PlanningPage() {
                           )}
                         </div>
                         </div>
+                        </div>
                       </div>
                     );
                   })}
@@ -268,6 +356,20 @@ export default function PlanningPage() {
           </section>
         </div>
       </div>
+
+      {/* Edit Item Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCancelEdit}
+        title="Edit Item"
+      >
+        <ItemForm
+          onSubmit={handleEditItem}
+          onCancel={handleCancelEdit}
+          initialData={editingItem || undefined}
+          submitLabel="Update Item"
+        />
+      </Modal>
     </div>
   );
 }

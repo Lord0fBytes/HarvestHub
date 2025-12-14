@@ -222,6 +222,34 @@ export default function Home() {
     }
   };
 
+  const handleResetStatuses = async () => {
+    if (window.confirm('Are you sure you want to reset all item statuses to null?')) {
+      // Reset all statuses
+      const updatePromises = items.map(item =>
+        updateItem(item.id, {
+          status: null
+        })
+      );
+
+      await Promise.all(updatePromises);
+      alert('All item statuses have been reset to null!');
+    }
+  };
+
+  const handleResetQuantities = async () => {
+    if (window.confirm('Are you sure you want to reset all item quantities to 0?')) {
+      // Reset all quantities
+      const updatePromises = items.map(item =>
+        updateItem(item.id, {
+          quantity: 0
+        })
+      );
+
+      await Promise.all(updatePromises);
+      alert('All item quantities have been reset to 0!');
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -290,6 +318,27 @@ export default function Home() {
                 <div className="bg-gray-800 rounded-lg border border-yellow-200 p-4 shadow-sm">
                   <div className="text-2xl font-bold text-yellow-600">{stats.skipped}</div>
                   <div className="text-sm text-gray-400">Skipped</div>
+                </div>
+              </div>
+            )}
+
+            {/* Developer Tools */}
+            {items.length > 0 && (
+              <div className="bg-gray-800 rounded-lg border border-gray-700 p-3 shadow-sm mb-4">
+                <div className="flex items-center justify-center gap-3 flex-wrap">
+                  <span className="text-xs text-gray-400">Dev Tools:</span>
+                  <button
+                    onClick={handleResetStatuses}
+                    className="px-3 py-1.5 bg-red-900 text-white rounded hover:bg-red-800 active:bg-red-700 transition-colors text-xs font-medium"
+                  >
+                    Reset Statuses
+                  </button>
+                  <button
+                    onClick={handleResetQuantities}
+                    className="px-3 py-1.5 bg-orange-900 text-white rounded hover:bg-orange-800 active:bg-orange-700 transition-colors text-xs font-medium"
+                  >
+                    Reset Quantities
+                  </button>
                 </div>
               </div>
             )}
