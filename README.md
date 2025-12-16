@@ -2,6 +2,9 @@
 
 A Progressive Web Application (PWA) for managing grocery lists. Designed to be mobile-friendly for use while shopping.
 
+> **🤖 Built with Claude Code**
+> This project is developed using [Claude Code](https://claude.com/claude-code), an AI-powered coding assistant. All code updates are reviewed by a human before being pushed to production.
+
 ## Features
 
 - 📱 **Mobile-First Design** - Optimized for use while shopping
