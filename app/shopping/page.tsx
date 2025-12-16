@@ -36,8 +36,13 @@ export default function ShoppingPage() {
       ? shoppingItems
       : shoppingItems.filter(item => item.stores.includes(selectedStore));
 
-    // Sort by aisle first, then alphabetically by name (case insensitive)
+    // Sort by status first (pending before purchased), then by aisle, then alphabetically by name (case insensitive)
     return filtered.sort((a, b) => {
+      // Priority 1: Status (pending before purchased)
+      if (a.status === 'pending' && b.status === 'purchased') return -1;
+      if (a.status === 'purchased' && b.status === 'pending') return 1;
+
+      // Priority 2: Aisle presence
       const aHasAisle = a.aisle !== null && a.aisle !== undefined && a.aisle !== '';
       const bHasAisle = b.aisle !== null && b.aisle !== undefined && b.aisle !== '';
 
