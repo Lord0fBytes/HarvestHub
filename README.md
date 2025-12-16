@@ -18,42 +18,6 @@ A Progressive Web Application (PWA) for managing grocery lists. Designed to be m
 
 **Version 1.0.0** - First Release with Docker Support ✅
 
-Completed features:
-- ✅ **Version 0.1.0** - Foundation & Basic Items
-  - Basic CRUD operations for grocery items
-  - In-memory state management
-  - Mobile-first UI
-- ✅ **Version 0.2.0** - Item Organization
-  - Tagging system with multi-tag support
-  - Store and aisle properties
-  - Filtering by tags and store
-  - Sort functionality (name, store, aisle, date)
-- ✅ **Version 0.3.0** - Full List Page
-  - Advanced filtering (tags, store, status)
-  - Search functionality across all fields
-  - Bulk operations (select, mark as purchased, delete)
-  - Statistics dashboard
-  - Modal-based add/edit forms
-  - Responsive navigation (sidebar + bottom nav)
-  - Multi-page structure (Planning, Shopping, Review, All Items)
-- ✅ **Version 0.4.0** - Planning Page & Data Model
-  - Planning page with search and quick-add to shopping list
-  - Supabase database integration (persistent data)
-  - Item type classification (grocery/supply/clothing/other)
-  - Multiple stores per item support
-  - Null status for master list items
-  - Enhanced filtering and display
-- ✅ **Version 0.10.0** - Review Page & Mobile UX
-  - Review page with Complete Purchasing functionality
-  - Mobile swipe-to-reveal actions (edit/delete/skip)
-  - Improved mobile responsiveness across all pages
-  - Developer tools for testing
-- ✅ **Version 1.0.0** - First Release
-  - Docker containerization support
-  - Production-ready deployment configuration
-  - Environment variable management
-  - Docker Compose for easy deployment
-
 See the full [Version Roadmap](ROADMAP.md) for upcoming features.
 
 ## Tech Stack
