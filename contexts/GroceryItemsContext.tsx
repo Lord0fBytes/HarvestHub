@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { GroceryItem, CreateGroceryItemInput, UpdateGroceryItemInput } from '@/types/grocery';
-import { supabase } from '@/lib/supabase';
 
 interface GroceryItemsContextType {
   items: GroceryItem[];
@@ -31,15 +30,16 @@ export function GroceryItemsProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .from('grocery_items')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const response = await fetch('/api/grocery-items');
 
-      if (fetchError) throw fetchError;
+      if (!response.ok) {
+        throw new Error('Failed to fetch items');
+      }
 
-      // Transform Supabase data to match our GroceryItem interface
-      const transformedItems: GroceryItem[] = (data || []).map(item => ({
+      const { items: data } = await response.json();
+
+      // Transform API data to match our GroceryItem interface
+      const transformedItems: GroceryItem[] = (data || []).map((item: any) => ({
         id: item.id,
         name: item.name,
         quantity: item.quantity,
@@ -66,23 +66,19 @@ export function GroceryItemsProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
 
-      // Insert into Supabase
-      const { data, error: insertError } = await supabase
-        .from('grocery_items')
-        .insert([{
-          name: input.name,
-          quantity: input.quantity,
-          unit: input.unit,
-          status: input.status,
-          type: input.type,
-          stores: input.stores || [],
-          aisle: input.aisle || null,
-          tags: input.tags || [],
-        }])
-        .select()
-        .single();
+      const response = await fetch('/api/grocery-items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+      });
 
-      if (insertError) throw insertError;
+      if (!response.ok) {
+        throw new Error('Failed to create item');
+      }
+
+      const { item: data } = await response.json();
 
       // Transform and add to local state
       const newItem: GroceryItem = {
@@ -112,22 +108,17 @@ export function GroceryItemsProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
 
-      // Update in Supabase
-      const { error: updateError } = await supabase
-        .from('grocery_items')
-        .update({
-          ...(updates.name !== undefined && { name: updates.name }),
-          ...(updates.quantity !== undefined && { quantity: updates.quantity }),
-          ...(updates.unit !== undefined && { unit: updates.unit }),
-          ...(updates.status !== undefined && { status: updates.status }),
-          ...(updates.type !== undefined && { type: updates.type }),
-          ...(updates.stores !== undefined && { stores: updates.stores }),
-          ...(updates.aisle !== undefined && { aisle: updates.aisle || null }),
-          ...(updates.tags !== undefined && { tags: updates.tags }),
-        })
-        .eq('id', id);
+      const response = await fetch(`/api/grocery-items/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
 
-      if (updateError) throw updateError;
+      if (!response.ok) {
+        throw new Error('Failed to update item');
+      }
 
       // Update local state
       setItems((prev) =>
@@ -147,13 +138,13 @@ export function GroceryItemsProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
 
-      // Delete from Supabase
-      const { error: deleteError } = await supabase
-        .from('grocery_items')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/grocery-items/${id}`, {
+        method: 'DELETE',
+      });
 
-      if (deleteError) throw deleteError;
+      if (!response.ok) {
+        throw new Error('Failed to delete item');
+      }
 
       // Update local state
       setItems((prev) => prev.filter((item) => item.id !== id));

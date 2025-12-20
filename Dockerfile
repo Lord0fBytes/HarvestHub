@@ -15,13 +15,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set environment variables for build
-# These will be replaced at runtime for NEXT_PUBLIC_ vars
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+# Build without environment variables
+# Supabase credentials will be provided at runtime via server-side env vars
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the application
