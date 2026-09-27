@@ -99,6 +99,16 @@ The `postgres-migration` branch can copy the existing `grocery_items` data from 
 
 The migration preserves IDs and timestamps, only inserts records that are not already present, and never overwrites local records. Remove the Supabase connection string from the deployment environment when finished.
 
+### PostgreSQL backups
+
+Create a timestamped, compressed database backup with:
+
+```bash
+./scripts/backup-postgres.sh
+```
+
+Backups are written to `/data/backups/harvesthub` by default. Set `BACKUP_DIR` before running the command to use a different location.
+
 #### Using Docker CLI
 
 ```bash
