@@ -1,17 +1,28 @@
-version: '3.8'
-
 services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: harvesthub
+      POSTGRES_USER: harvesthub
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    container_name: harvesthub-postgres
+
   harvesthub:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3100:3000"
     environment:
-      # Server-side environment variables provided at runtime
-      # Use either SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
-      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY:-}
+      DATABASE_URL: postgresql://harvesthub:${POSTGRES_PASSWORD}@postgres:5432/harvesthub
+    depends_on:
+      - postgres
     restart: unless-stopped
     container_name: harvesthub
+
+volumes:
+  postgres_data:
