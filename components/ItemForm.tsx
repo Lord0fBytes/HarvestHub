@@ -12,7 +12,7 @@ interface ItemFormProps {
 
 export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add Item' }: ItemFormProps) {
   const [name, setName] = useState(initialData?.name || '');
-  const [quantity, setQuantity] = useState(initialData?.quantity.toString() || '1');
+  const [quantity, setQuantity] = useState(initialData?.quantity.toString() || '0');
   const [unit, setUnit] = useState(initialData?.unit || 'count');
   const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status ?? null);
   const [type, setType] = useState<GroceryItem['type']>(initialData?.type || 'grocery');
@@ -55,7 +55,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
 
     if (!initialData) {
       setName('');
-      setQuantity('1');
+      setQuantity('0');
       setUnit('count');
       setStatus(null);
       setType('grocery');
