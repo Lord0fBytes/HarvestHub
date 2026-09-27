@@ -7,7 +7,7 @@ import { ItemForm } from '@/components/ItemForm';
 import { CreateGroceryItemInput } from '@/types/grocery';
 
 export default function PlanningPage() {
-  const { items, updateItem } = useGroceryItems();
+  const { items, addItem, updateItem } = useGroceryItems();
   const [searchQuery, setSearchQuery] = useState('');
   const [swipedItemId, setSwipedItemId] = useState<string | null>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -100,10 +100,25 @@ export default function PlanningPage() {
     setSwipedItemId(null);
   };
 
-  const handleEditItem = (input: CreateGroceryItemInput) => {
+  const handleOpenNewItemModal = () => {
+    setEditingId(null);
+    setIsModalOpen(true);
+  };
+
+  const handleSubmitItem = async (input: CreateGroceryItemInput) => {
     if (editingId) {
-      updateItem(editingId, input);
+      await updateItem(editingId, input);
       setEditingId(null);
+      setIsModalOpen(false);
+      return;
+    }
+
+    const newItem = await addItem({
+      ...input,
+      status: 'pending',
+    });
+
+    if (newItem) {
       setIsModalOpen(false);
     }
   };
@@ -283,17 +298,26 @@ export default function PlanningPage() {
         </div>
       </div>
 
-      {/* Edit Item Modal */}
+      <button
+        onClick={handleOpenNewItemModal}
+        className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-green-600 text-white shadow-lg transition-colors hover:bg-green-500 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-gray-900 md:bottom-6 md:right-6"
+        aria-label="Add a new item to the shopping list"
+      >
+        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+
       <Modal
         isOpen={isModalOpen}
         onClose={handleCancelEdit}
-        title="Edit Item"
+        title={editingId ? 'Edit Item' : 'New Item'}
       >
         <ItemForm
-          onSubmit={handleEditItem}
+          onSubmit={handleSubmitItem}
           onCancel={handleCancelEdit}
           initialData={editingItem || undefined}
-          submitLabel="Update Item"
+          submitLabel={editingId ? 'Update Item' : 'Add to Shopping List'}
         />
       </Modal>
     </div>

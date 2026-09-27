@@ -12,8 +12,6 @@ interface ItemFormProps {
 
 export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add Item' }: ItemFormProps) {
   const [name, setName] = useState(initialData?.name || '');
-  const [quantity, setQuantity] = useState(initialData?.quantity.toString() || '0');
-  const [unit, setUnit] = useState(initialData?.unit || 'count');
   const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status ?? null);
   const [type, setType] = useState<GroceryItem['type']>(initialData?.type || 'grocery');
   const [stores, setStores] = useState<string[]>(initialData?.stores || []);
@@ -25,8 +23,6 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
   useEffect(() => {
     if (initialData) {
       setName(initialData.name);
-      setQuantity(initialData.quantity.toString());
-      setUnit(initialData.unit);
       setStatus(initialData.status);
       setType(initialData.type);
       setStores(initialData.stores || []);
@@ -39,13 +35,10 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
     e.preventDefault();
     if (!name.trim()) return;
 
-    const parsedQuantity = Number.parseFloat(quantity);
-    if (Number.isNaN(parsedQuantity) || parsedQuantity < 0) return;
-
     onSubmit({
       name: name.trim(),
-      quantity: parsedQuantity,
-      unit: unit.trim(),
+      quantity: initialData?.quantity ?? 0,
+      unit: initialData?.unit || 'count',
       status,
       type,
       stores,
@@ -55,8 +48,6 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
 
     if (!initialData) {
       setName('');
-      setQuantity('0');
-      setUnit('count');
       setStatus(null);
       setType('grocery');
       setStores([]);
@@ -98,24 +89,6 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
     }
   };
 
-  const commonUnits = [
-    'count',
-    'lb',
-    'oz',
-    'kg',
-    'g',
-    'cup',
-    'tbsp',
-    'tsp',
-    'ml',
-    'L',
-    'bunch',
-    'bag',
-    'box',
-    'can',
-    'jar',
-  ];
-
   return (
     <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg border border-gray-700 p-6 shadow-sm">
       <div className="space-y-4">
@@ -132,42 +105,6 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
             required
             className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-gray-300 mb-1">
-              Quantity *
-            </label>
-            <input
-              type="number"
-              id="quantity"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              min="0"
-              step="0.01"
-              required
-              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="unit" className="block text-sm font-medium text-gray-300 mb-1">
-              Unit *
-            </label>
-            <select
-              id="unit"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              {commonUnits.map((u) => (
-                <option key={u} value={u}>
-                  {u}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -226,7 +163,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
               <button
                 type="button"
                 onClick={handleAddStore}
-                className="px-4 py-2 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-200"
+                className="min-h-11 rounded-md bg-green-700 px-4 text-white transition-colors hover:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-gray-800"
               >
                 Add
               </button>
@@ -271,7 +208,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="px-4 py-2 bg-gray-200 text-gray-300 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="min-h-11 rounded-md bg-green-700 px-4 text-white transition-colors hover:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-gray-800"
               >
                 Add
               </button>
