@@ -57,27 +57,11 @@ export default function PlanningPage() {
     });
   }, [items, searchQuery]);
 
-  // Handle increasing quantity
-  const handleIncreaseQuantity = (itemId: string, currentQuantity: number) => {
+  // Add an item to the shopping list without changing its saved quantity.
+  const handleAddToShoppingList = (itemId: string) => {
     updateItem(itemId, {
-      quantity: currentQuantity + 1,
-      status: 'pending'
+      status: 'pending',
     });
-  };
-
-  // Handle decreasing quantity
-  const handleDecreaseQuantity = (itemId: string, currentQuantity: number) => {
-    if (currentQuantity <= 1) {
-      // Set to 0 and remove from shopping list
-      updateItem(itemId, {
-        quantity: 0,
-        status: null
-      });
-    } else {
-      updateItem(itemId, {
-        quantity: currentQuantity - 1
-      });
-    }
   };
 
   // Touch handlers for swipe
@@ -207,14 +191,16 @@ export default function PlanningPage() {
                       <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
                         Tags
                       </span>
-                      <div className="w-28"></div>
+                      <span className="w-20 text-xs font-bold text-gray-300 uppercase tracking-wide text-right">
+                        List
+                      </span>
                     </div>
                   </div>
 
                   {/* Items List */}
                   <div className="divide-y divide-gray-700">
                   {filteredItems.map((item) => {
-                    const hasQuantity = item.quantity > 0 && item.status === 'pending';
+                    const isAddedToShoppingList = item.status === 'pending';
                     const isItemSwiped = swipedItemId === item.id;
 
                     return (
@@ -263,80 +249,20 @@ export default function PlanningPage() {
                             ) : null}
                           </div>
 
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-1.5 justify-end w-28">
-                          {hasQuantity ? (
-                            <>
-                              {/* Minus Button */}
-                              <button
-                                onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
-                                className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-700 text-white hover:bg-gray-600 active:bg-gray-500 transition-colors"
-                                aria-label="Decrease quantity"
-                              >
-                                <svg
-                                  className="w-5 h-5"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M20 12H4"
-                                  />
-                                </svg>
-                              </button>
-
-                              {/* Quantity Display */}
-                              <span className="text-base font-semibold text-gray-100 min-w-[1.5rem] text-center">
-                                {item.quantity}
-                              </span>
-
-                              {/* Plus Button */}
-                              <button
-                                onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
-                                className="flex items-center justify-center w-9 h-9 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
-                                aria-label="Increase quantity"
-                              >
-                                <svg
-                                  className="w-5 h-5"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 4v16m8-8H4"
-                                  />
-                                </svg>
-                              </button>
-                            </>
-                          ) : (
-                            /* Plus Button Only (when quantity is 0 or status is null) */
+                          <div className="flex justify-end w-20">
                             <button
-                              onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
-                              className="flex items-center justify-center w-9 h-9 rounded-full bg-green-900 text-white hover:bg-green-800 active:bg-green-700 transition-colors"
-                              aria-label="Add to shopping list"
+                              onClick={() => handleAddToShoppingList(item.id)}
+                              disabled={isAddedToShoppingList}
+                              className={`min-h-11 min-w-20 rounded-md px-3 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                                isAddedToShoppingList
+                                  ? 'cursor-default bg-gray-700 text-gray-400'
+                                  : 'bg-green-700 text-white hover:bg-green-600 active:bg-green-800'
+                              }`}
+                              aria-label={isAddedToShoppingList ? `${item.name} is already on the shopping list` : `Add ${item.name} to the shopping list`}
                             >
-                              <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 4v16m8-8H4"
-                                />
-                              </svg>
+                              {isAddedToShoppingList ? 'Added' : 'Add'}
                             </button>
-                          )}
-                        </div>
+                          </div>
                         </div>
                         </div>
                       </div>

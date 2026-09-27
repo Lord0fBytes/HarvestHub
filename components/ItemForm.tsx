@@ -39,9 +39,12 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
     e.preventDefault();
     if (!name.trim()) return;
 
+    const parsedQuantity = Number.parseFloat(quantity);
+    if (Number.isNaN(parsedQuantity) || parsedQuantity < 0) return;
+
     onSubmit({
       name: name.trim(),
-      quantity: parseFloat(quantity) || 1,
+      quantity: parsedQuantity,
       unit: unit.trim(),
       status,
       type,
@@ -141,7 +144,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
               id="quantity"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              min="0.01"
+              min="0"
               step="0.01"
               required
               className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"

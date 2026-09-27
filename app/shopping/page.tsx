@@ -210,19 +210,16 @@ export default function ShoppingPage() {
                 <>
                   {/* Column Headers */}
                   <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-600">
-                    <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_auto] gap-3 items-center">
+                    <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto] gap-3 items-center">
                       <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
                         Item
-                      </span>
-                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide text-right min-w-[4rem]">
-                        Qty
                       </span>
                       <span className="text-xs font-bold text-gray-300 uppercase tracking-wide text-center min-w-[4rem]">
                         Aisle
                       </span>
                     </div>
                     {/* Spacer for action button */}
-                    <div className="ml-4 w-10 flex-shrink-0"></div>
+                    <div className="ml-4 w-11 flex-shrink-0"></div>
                   </div>
 
                   {/* Items List */}
@@ -257,7 +254,7 @@ export default function ShoppingPage() {
                           onTouchEnd={(e) => handleTouchEnd(e, item.id)}
                         >
                         {/* Item Info - Formatted in columns */}
-                        <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto_auto] gap-3 items-center">
+                        <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto] gap-3 items-center">
                           {/* Column 1: Item Name */}
                           <h3 className={`font-semibold text-base ${
                             isPurchased ? 'text-gray-400 line-through' : 'text-white'
@@ -265,12 +262,7 @@ export default function ShoppingPage() {
                             {item.name}
                           </h3>
 
-                          {/* Column 2: Quantity */}
-                          <span className="text-gray-300 font-medium whitespace-nowrap text-sm text-right min-w-[4rem]">
-                            {item.quantity} {item.unit}
-                          </span>
-
-                          {/* Column 3: Aisle */}
+                          {/* Column 2: Aisle */}
                           <span className="text-gray-300 font-semibold whitespace-nowrap text-sm text-center min-w-[4rem]">
                             {item.aisle ? item.aisle : '—'}
                           </span>
@@ -281,7 +273,7 @@ export default function ShoppingPage() {
                           {/* Purchase Button */}
                           <button
                             onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
-                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+                            className={`flex items-center justify-center w-11 h-11 rounded-full transition-colors ${
                               isPurchased
                                 ? 'bg-gray-700 hover:bg-gray-600 active:bg-gray-500'
                                 : 'bg-green-900 text-white hover:bg-green-800 active:bg-green-700'

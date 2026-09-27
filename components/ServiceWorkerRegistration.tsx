@@ -4,8 +4,26 @@ import { useEffect } from 'react';
 
 export function ServiceWorkerRegistration() {
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
+    if (!('serviceWorker' in navigator)) return;
+
+    if (process.env.NODE_ENV !== 'production') {
+      void Promise.all([
+        navigator.serviceWorker.getRegistrations().then((registrations) =>
+          Promise.all(registrations.map((registration) => registration.unregister()))
+        ),
+        caches.keys().then((cacheNames) =>
+          Promise.all(
+            cacheNames
+              .filter((name) => name.startsWith('harvesthub-'))
+              .map((name) => caches.delete(name))
+          )
+        ),
+      ]);
+
+      return;
+    }
+
+    const registerServiceWorker = () => {
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) => {
@@ -28,8 +46,13 @@ export function ServiceWorkerRegistration() {
           .catch((error) => {
             console.log('Service Worker registration failed:', error);
           });
-      });
-    }
+    };
+
+    window.addEventListener('load', registerServiceWorker);
+
+    return () => {
+      window.removeEventListener('load', registerServiceWorker);
+    };
   }, []);
 
   return null;
