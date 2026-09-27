@@ -80,6 +80,25 @@ docker-compose down
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
 
+### One-time Supabase data migration
+
+The `postgres-migration` branch can copy the existing `grocery_items` data from Supabase into the self-hosted PostgreSQL database. Supabase must be resumed long enough for the migration to connect.
+
+1. Deploy and start the new stack first.
+2. Run a dry run from the running HarvestHub container:
+
+   ```bash
+   docker compose exec -e SUPABASE_DATABASE_URL='your-supabase-postgres-connection-string' harvesthub npm run migrate:supabase
+   ```
+
+3. If the item count is correct, repeat with `--apply`:
+
+   ```bash
+   docker compose exec -e SUPABASE_DATABASE_URL='your-supabase-postgres-connection-string' harvesthub npm run migrate:supabase -- --apply
+   ```
+
+The migration preserves IDs and timestamps, only inserts records that are not already present, and never overwrites local records. Remove the Supabase connection string from the deployment environment when finished.
+
 #### Using Docker CLI
 
 ```bash
