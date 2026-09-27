@@ -18,8 +18,18 @@ const source = new Pool({
   connectionString: sourceUrl,
   // Supabase requires TLS for external database connections.
   ssl: { rejectUnauthorized: false },
+  connectionTimeoutMillis: 15_000,
 });
-const target = new Pool({ connectionString: targetUrl });
+const target = new Pool({ connectionString: targetUrl, connectionTimeoutMillis: 15_000 });
+
+function describeError(error) {
+  if (!(error instanceof Error)) return String(error ?? 'Unknown error');
+
+  const code = typeof error === 'object' && 'code' in error && typeof error.code === 'string'
+    ? ` (${error.code})`
+    : '';
+  return `${error.message || error.name}${code}`;
+}
 
 async function main() {
   try {
@@ -94,7 +104,7 @@ async function main() {
     console.log(`Migration complete: ${inserted} inserted, ${skipped} already present.`);
   } catch (error) {
     await target.query('ROLLBACK').catch(() => {});
-    console.error('Migration failed:', error instanceof Error ? error.message : error);
+    console.error('Migration failed:', describeError(error));
     process.exitCode = 1;
   } finally {
     await Promise.all([source.end(), target.end()]);
