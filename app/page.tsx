@@ -4,11 +4,12 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
 import { Modal } from '@/components/Modal';
 import { ItemForm } from '@/components/ItemForm';
-import { CreateGroceryItemInput } from '@/types/grocery';
+import { CreateGroceryItemInput, ItemType } from '@/types/grocery';
 
 export default function PlanningPage() {
   const { items, addItem, updateItem } = useGroceryItems();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState<ItemType | 'all'>('all');
   const [swipedItemId, setSwipedItemId] = useState<string | null>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -24,14 +25,20 @@ export default function PlanningPage() {
   // Filter and sort items
   const filteredItems = useMemo(() => {
     // First filter by status (only show null and pending items)
-    const statusFiltered = items.filter(item =>
+    let filtered = items.filter(item =>
       item.status === null || item.status === 'pending'
     );
 
-    // Then filter by search query
-    const filtered = statusFiltered.filter(item =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(item => item.type === selectedType);
+    }
+
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    if (normalizedQuery) {
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(normalizedQuery)
+      );
+    }
 
     // Sort first by tag, then by name alphabetically
     return filtered.sort((a, b) => {
@@ -55,7 +62,7 @@ export default function PlanningPage() {
       // Both don't have tags - sort by name
       return a.name.localeCompare(b.name);
     });
-  }, [items, searchQuery]);
+  }, [items, searchQuery, selectedType]);
 
   // Add an item to the shopping list without changing its saved quantity.
   const handleAddToShoppingList = (itemId: string) => {
@@ -143,9 +150,9 @@ export default function PlanningPage() {
               Build your shopping list by adding items you need
             </p>
 
-            {/* Search Bar */}
-            <div className="mb-6">
-              <div className="relative">
+            {/* Search and type filter */}
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+              <div className="relative flex-1">
                 <input
                   type="text"
                   placeholder="Search items..."
@@ -166,6 +173,23 @@ export default function PlanningPage() {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
+              </div>
+              <div className="sm:w-48">
+                <label htmlFor="type-filter" className="sr-only">
+                  Filter by item type
+                </label>
+                <select
+                  id="type-filter"
+                  value={selectedType}
+                  onChange={(event) => setSelectedType(event.target.value as ItemType | 'all')}
+                  className="min-h-11 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 text-gray-100 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                >
+                  <option value="all">All Types</option>
+                  <option value="grocery">Grocery</option>
+                  <option value="supply">Supply</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="other">Other</option>
+                </select>
               </div>
             </div>
 
@@ -190,8 +214,8 @@ export default function PlanningPage() {
                     No items found
                   </h3>
                   <p className="text-gray-400">
-                    {searchQuery
-                      ? 'Try a different search term'
+                    {searchQuery || selectedType !== 'all'
+                      ? 'Try a different search term or type'
                       : 'Go to All Items to add items to your master list'}
                   </p>
                 </div>
