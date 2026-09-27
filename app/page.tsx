@@ -206,7 +206,7 @@ export default function PlanningPage() {
                       <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
                         Tags
                       </span>
-                      <span className="w-20 text-xs font-bold text-gray-300 uppercase tracking-wide text-right">
+                      <span className="w-11 text-xs font-bold text-gray-300 uppercase tracking-wide text-right">
                         List
                       </span>
                     </div>
@@ -246,16 +246,30 @@ export default function PlanningPage() {
                         >
                         <div className="grid grid-cols-[2fr_1fr_auto] gap-3 items-center">
                           {/* Item Name */}
-                          <h3 className="text-base font-semibold text-white truncate">
-                            {item.name}
-                          </h3>
+                          <div className="min-w-0">
+                            <h3 className="text-base font-semibold text-white truncate">
+                              {item.name}
+                            </h3>
+                            {item.stores.length > 0 && (
+                              <div className="mt-1 flex min-w-0 items-center gap-1" aria-label={`Stores: ${item.stores.join(', ')}`}>
+                                <span className="min-w-0 truncate rounded bg-purple-900 px-2 py-0.5 text-xs font-medium text-purple-200 whitespace-nowrap">
+                                  {item.stores[0]}
+                                </span>
+                                {item.stores.length > 1 && (
+                                  <span className="shrink-0 text-xs text-purple-200" aria-label={`${item.stores.length - 1} additional stores`}>
+                                    +{item.stores.length - 1}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
 
-                          {/* Tags Column */}
+                          {/* Tags */}
                           <div className="flex items-center gap-2 flex-wrap">
                             {item.tags && item.tags.length > 0 ? (
                               item.tags.map((tag) => (
                                 <span
-                                  key={tag}
+                                  key={`tag-${tag}`}
                                   className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-300 whitespace-nowrap"
                                 >
                                   {tag}
@@ -264,18 +278,20 @@ export default function PlanningPage() {
                             ) : null}
                           </div>
 
-                          <div className="flex justify-end w-20">
+                          <div className="flex justify-end w-11">
                             <button
                               onClick={() => handleAddToShoppingList(item.id)}
                               disabled={isAddedToShoppingList}
-                              className={`min-h-11 min-w-20 rounded-md px-3 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
                                 isAddedToShoppingList
                                   ? 'cursor-default bg-gray-700 text-gray-400'
                                   : 'bg-green-700 text-white hover:bg-green-600 active:bg-green-800'
                               }`}
                               aria-label={isAddedToShoppingList ? `${item.name} is already on the shopping list` : `Add ${item.name} to the shopping list`}
                             >
-                              {isAddedToShoppingList ? 'Added' : 'Add'}
+                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                              </svg>
                             </button>
                           </div>
                         </div>
