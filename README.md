@@ -1,86 +1,86 @@
 # HarvestHub
 
-A Progressive Web Application (PWA) for managing grocery lists. Designed to be mobile-friendly for use while shopping.
+HarvestHub is a mobile-first Progressive Web App for planning, shopping for, and reviewing grocery lists. It runs against a self-hosted PostgreSQL database and is designed to stay quick and usable while you are in the store.
 
-> **🤖 Built with Claude Code**
-> This project is developed using [Claude Code](https://claude.com/claude-code), an AI-powered coding assistant. All code updates are reviewed by a human before being pushed to production.
+## Current release
+
+**v1.2.0 — Visual Overhaul**
+
+The current release introduces HarvestHub's warm brown-and-orange interface, compact responsive navigation, improved list density, and the HarvestHub leaf mark. See the [release notes](https://github.com/Lord0fBytes/HarvestHub/releases/tag/v1.2.0) for the full summary.
 
 ## Features
 
-- 📱 **Mobile-First Design** - Optimized for use while shopping
-- 🔄 **Real-time Sync** - Powered by Supabase for persistent data
-- 📝 **Smart Planning** - Organize items by tags, stores, and aisles
-- 🛒 **Shopping Mode** - Mark items as purchased with swipe gestures
-- 📊 **Review & Complete** - Track and complete your shopping trips
-- 🐳 **Docker Ready** - Easy deployment with Docker support
+- **Plan your shop** — Search and filter the master list by type or tag, then add an item to the current cart. The same control removes it if added by mistake.
+- **Shopping mode** — Work through pending items by store and aisle, mark them purchased, undo a purchase, or swipe to skip an item on mobile.
+- **Review & complete** — Review pending, purchased, and skipped totals; complete a trip to clear purchased items for the next shop.
+- **All items** — Maintain the master list, including item names, type, stores, aisle, tags, and status.
+- **Mobile-first PWA** — Responsive desktop and mobile navigation, install support, and a layout tuned for quick use on a phone.
+- **PostgreSQL-backed** — Item data is persisted in PostgreSQL, with Docker Compose for deployment and a backup script for routine maintenance.
 
-## Current Status
+## Tech stack
 
-**Version 1.0.0** - First Release with Docker Support ✅
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript 5
+- **Styling:** Tailwind CSS 4
+- **Database:** PostgreSQL 17
+- **Data access:** `pg`
+- **PWA:** `@ducanh2912/next-pwa`
+- **Container runtime:** Docker and Docker Compose
 
-See the full [Version Roadmap](ROADMAP.md) for upcoming features.
+## Getting started
 
-## Tech Stack
+### Local development
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript 5
-- **Styling**: Tailwind CSS 3.4
-- **Type**: Progressive Web App (PWA)
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: None - publicly accessible
-- **ORM**: TBD (Drizzle or Prisma)
-- **Deployment**: Vercel
-
-## Getting Started
-
-### Local Development
-
-First, install dependencies and run the development server:
+Install dependencies, configure a PostgreSQL connection, and start the development server:
 
 ```bash
 npm install
-npm run dev
+DATABASE_URL='postgresql://harvesthub:your-password@127.0.0.1:15432/harvesthub' npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The example assumes an SSH tunnel that exposes PostgreSQL on local port `15432`. Use the host, port, user, password, and database that apply to your own PostgreSQL instance. You can instead place `DATABASE_URL` in `.env.local`; do not commit that file.
 
-### Docker Deployment
+For the production build used to verify changes locally:
 
-HarvestHub can be deployed using Docker for production environments.
+```bash
+npm run build -- --webpack
+```
+
+### Docker deployment
 
 #### Prerequisites
-- Docker installed on your system
-- Docker Compose (optional, but recommended)
 
-#### Environment Variables
+- Docker
+- Docker Compose
 
-Create a `.env` file in the root directory with your Supabase credentials:
+#### Environment variables
+
+Create a `.env` file in the repository root with a strong database password:
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+POSTGRES_PASSWORD=choose-a-strong-password
 ```
 
-You can use `.env.example` as a template.
+Docker Compose passes this password to PostgreSQL and constructs the application's internal `DATABASE_URL` automatically.
 
-#### Using Docker Compose (Recommended)
+#### Start the stack
 
 ```bash
-# Build and run the container
-docker-compose up -d
+# Build and run the application and database
+docker compose up -d --build
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
-# Stop the container
-docker-compose down
+# Stop the stack
+docker compose down
 ```
 
-The application will be available at [http://localhost:3000](http://localhost:3000).
+The application is available at [http://localhost:3100](http://localhost:3100). PostgreSQL is bound to `127.0.0.1:5433` on the Docker host and is not exposed to the network.
 
-### One-time Supabase data migration
+### One-time Supabase migration
 
 The `postgres-migration` branch can copy the existing `grocery_items` data from Supabase into the self-hosted PostgreSQL database. Supabase must be resumed long enough for the migration to connect.
 
@@ -109,25 +109,6 @@ Create a timestamped, compressed database backup with:
 
 Backups are written to `/data/backups/harvesthub` by default. Set `BACKUP_DIR` before running the command to use a different location.
 
-#### Using Docker CLI
+## Health check
 
-```bash
-# Build the image
-docker build \
-  --build-arg NEXT_PUBLIC_SUPABASE_URL=your-supabase-url \
-  --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-key \
-  -t harvesthub .
-
-# Run the container
-docker run -p 3000:3000 \
-  -e NEXT_PUBLIC_SUPABASE_URL=your-supabase-url \
-  -e NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-key \
-  harvesthub
-```
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+When the application is running, `GET /api/health` returns `{ "status": "ok" }` and can be used by a reverse proxy or uptime monitor.
