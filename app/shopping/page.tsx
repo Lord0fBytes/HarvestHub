@@ -150,23 +150,25 @@ export default function ShoppingPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="space-y-6">
+      <div className="mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+        <div className="space-y-5">
           {/* Header */}
           <section>
-            <h2 className="text-2xl font-semibold text-gray-100 mb-4 text-center md:text-left">
+            <h2 className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--action)]">
               Shopping Mode
             </h2>
-            <p className="text-gray-400 mb-6 text-center md:text-left">
+            <p className="mb-5 text-[var(--muted)] md:text-lg">
               Check off items as you shop
             </p>
 
             {/* Store Filter Dropdown */}
-            <div className="mb-6">
+            <div className="mb-6 max-w-sm">
+              <label htmlFor="store-filter" className="sr-only">Filter by store</label>
               <select
+                id="store-filter"
                 value={selectedStore}
                 onChange={(e) => setSelectedStore(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="hh-field min-h-12 w-full rounded-xl border px-4 py-3"
               >
                 <option value="all">All Stores ({shoppingItems.length} items)</option>
                 {stores.map(store => {
@@ -181,11 +183,11 @@ export default function ShoppingPage() {
             </div>
 
             {/* Items List */}
-            <div className="bg-gray-800 rounded-lg border border-gray-700 shadow-sm">
+            <div className="overflow-hidden rounded-2xl border border-[var(--separator)] bg-[var(--surface)]">
               {filteredItems.length === 0 ? (
-                <div className="p-8 text-center">
+                <div className="p-10 text-center">
                   <svg
-                    className="mx-auto h-12 w-12 text-gray-600 mb-4"
+                    className="mx-auto mb-4 h-12 w-12 text-[var(--subtle)]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -197,10 +199,10 @@ export default function ShoppingPage() {
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                     />
                   </svg>
-                  <h3 className="text-lg font-medium text-gray-100 mb-2">
+                  <h3 className="mb-2 text-lg font-medium text-[var(--foreground)]">
                     No items to shop for
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-[var(--muted)]">
                     {selectedStore === 'all'
                       ? 'Go to Planning to add items to your shopping list'
                       : `No items for ${selectedStore}`}
@@ -209,12 +211,12 @@ export default function ShoppingPage() {
               ) : (
                 <>
                   {/* Column Headers */}
-                  <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-600">
+                  <div className="flex items-center justify-between border-b border-[var(--separator)] bg-[var(--surface)] px-4 py-3">
                     <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto] gap-3 items-center">
-                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                      <span className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
                         Item
                       </span>
-                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide text-center min-w-[4rem]">
+                      <span className="min-w-[4rem] text-center text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
                         Aisle
                       </span>
                     </div>
@@ -223,7 +225,7 @@ export default function ShoppingPage() {
                   </div>
 
                   {/* Items List */}
-                  <div className="divide-y divide-gray-700">
+                  <div className="divide-y divide-[var(--separator)]">
                     {filteredItems.map((item) => {
                     const isPurchased = item.status === 'purchased';
                     const isItemSwiped = swipedItemId === item.id;
@@ -234,10 +236,10 @@ export default function ShoppingPage() {
                       >
                         {/* Skip button revealed on swipe (mobile only) - only for pending items */}
                         {isTouchDevice && !isPurchased && (
-                          <div className="absolute right-0 top-0 bottom-0 flex bg-gray-700 w-1/4">
+                          <div className="absolute right-0 top-0 bottom-0 flex w-1/4 bg-[var(--surface-hover)]">
                             <button
                               onClick={() => handleSkipItem(item.id)}
-                              className="h-full w-full bg-yellow-600 text-white font-medium flex items-center justify-center"
+                              className="h-full w-full bg-[var(--subtle)] font-medium text-[var(--background)]"
                             >
                               Skip
                             </button>
@@ -246,7 +248,7 @@ export default function ShoppingPage() {
 
                         {/* Main content that slides */}
                         <div
-                          className={`relative flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-700 transition-all duration-200 ease-out ${
+                          className={`relative flex items-center justify-between bg-[var(--surface)] px-4 py-3 transition-all duration-200 ease-out hover:bg-[var(--surface-hover)] ${
                             isPurchased ? 'opacity-60' : ''
                           } ${isItemSwiped ? '-translate-x-[25%]' : 'translate-x-0'}`}
                           onTouchStart={(e) => handleTouchStart(e, item.id)}
@@ -257,13 +259,13 @@ export default function ShoppingPage() {
                         <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto] gap-3 items-center">
                           {/* Column 1: Item Name */}
                           <h3 className={`font-semibold text-base ${
-                            isPurchased ? 'text-gray-400 line-through' : 'text-white'
+                            isPurchased ? 'text-[var(--subtle)] line-through' : 'text-[var(--foreground)]'
                           }`}>
                             {item.name}
                           </h3>
 
                           {/* Column 2: Aisle */}
-                          <span className="text-gray-300 font-semibold whitespace-nowrap text-sm text-center min-w-[4rem]">
+                          <span className="min-w-[4rem] whitespace-nowrap text-center text-sm font-semibold text-[var(--muted)]">
                             {item.aisle ? item.aisle : '—'}
                           </span>
                         </div>
@@ -273,17 +275,17 @@ export default function ShoppingPage() {
                           {/* Purchase Button */}
                           <button
                             onClick={() => handleToggleStatus(item.id, item.status as 'pending' | 'purchased')}
-                            className={`flex items-center justify-center w-11 h-11 rounded-full transition-colors ${
+                            className={`hh-focus flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
                               isPurchased
-                                ? 'bg-gray-700 hover:bg-gray-600 active:bg-gray-500'
-                                : 'bg-green-900 text-white hover:bg-green-800 active:bg-green-700'
+                                ? 'bg-[var(--separator)] text-[var(--muted)] hover:bg-[var(--subtle)] hover:text-[var(--background)]'
+                                : 'hh-action active:bg-[#c85e2e]'
                             }`}
                             aria-label={isPurchased ? 'Mark as pending (undo)' : 'Mark as purchased'}
                           >
                             {isPurchased ? (
                               // Dollar Sign Icon
                               <svg
-                                className="w-5 h-5 text-gray-400"
+                                className="h-5 w-5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -324,7 +326,7 @@ export default function ShoppingPage() {
 
             {/* Item Count */}
             {filteredItems.length > 0 && (
-              <div className="mt-4 text-sm text-gray-400 text-center">
+              <div className="mt-4 text-center text-sm text-[var(--muted)]">
                 {selectedStore === 'all'
                   ? `${filteredItems.length} items on your shopping list`
                   : `Showing ${filteredItems.length} items for ${selectedStore}`}

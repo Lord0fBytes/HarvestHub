@@ -1,8 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { ServerStatus } from './ServerStatus';
+import { useGroceryItems } from '@/hooks/useGroceryItems';
+import leafMark from '../ChatGPT Image Sep 28, 2026, 07_38_01 PM.png';
 
 interface NavItem {
   name: string;
@@ -51,12 +54,14 @@ const navItems: NavItem[] = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { items } = useGroceryItems();
+  const cartCount = items.filter((item) => item.status === 'pending').length;
 
   return (
-    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:w-64 md:bg-gray-800 md:border-r md:border-gray-700">
+    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:w-64 md:bg-[var(--surface)] md:border-r md:border-[var(--separator)]">
       {/* Logo/Brand */}
-      <div className="flex items-center justify-center h-16 px-6 border-b border-gray-700">
-        <h1 className="text-2xl font-bold text-green-500">HarvestHub</h1>
+      <div className="flex items-center h-16 px-6 border-b border-[var(--separator)]">
+        <h1 className="flex items-center gap-2 text-xl tracking-tight"><Image src={leafMark} alt="" aria-hidden="true" className="h-6 w-6 object-contain" /><span><span className="font-bold text-[var(--brand)]">Harvest</span><span className="font-normal text-[var(--foreground)]">Hub</span></span></h1>
       </div>
 
       {/* Navigation */}
@@ -67,23 +72,28 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              className={`hh-focus flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                 isActive
-                  ? 'bg-green-900 text-green-400 font-medium'
-                  : 'text-gray-300 hover:bg-gray-700'
+                  ? 'bg-[var(--action)] text-[var(--on-action)] font-semibold'
+                  : 'text-[var(--muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]'
               }`}
             >
               {item.icon}
               <span>{item.name}</span>
+              {item.href === '/shopping' && cartCount > 0 && (
+                <span className={`ml-auto min-w-5 rounded-full px-1.5 py-0.5 text-center text-xs font-bold ${isActive ? 'bg-[var(--on-action)] text-[var(--action)]' : 'bg-[var(--cart-state)] text-[var(--background)]'}`}>
+                  {cartCount}
+                </span>
+              )}
             </Link>
           );
         })}
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-700 space-y-2">
+      <div className="p-4 border-t border-[var(--separator)] space-y-2">
         <ServerStatus />
-        <p className="text-xs text-gray-400 text-center">
+        <p className="text-xs text-[var(--subtle)] text-center">
           Your grocery shopping companion
         </p>
       </div>

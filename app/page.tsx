@@ -10,6 +10,7 @@ export default function PlanningPage() {
   const { items, addItem, updateItem } = useGroceryItems();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<ItemType | 'all'>('all');
+  const [selectedTag, setSelectedTag] = useState('all');
   const [swipedItemId, setSwipedItemId] = useState<string | null>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -31,6 +32,10 @@ export default function PlanningPage() {
 
     if (selectedType !== 'all') {
       filtered = filtered.filter(item => item.type === selectedType);
+    }
+
+    if (selectedTag !== 'all') {
+      filtered = filtered.filter(item => item.tags?.includes(selectedTag));
     }
 
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -62,12 +67,22 @@ export default function PlanningPage() {
       // Both don't have tags - sort by name
       return a.name.localeCompare(b.name);
     });
-  }, [items, searchQuery, selectedType]);
+  }, [items, searchQuery, selectedTag, selectedType]);
+
+  const tags = useMemo(() => Array.from(
+    new Set(items.flatMap((item) => item.tags ?? [])),
+  ).sort((a, b) => a.localeCompare(b)), [items]);
 
   // Add an item to the shopping list without changing its saved quantity.
   const handleAddToShoppingList = (itemId: string) => {
     updateItem(itemId, {
       status: 'pending',
+    });
+  };
+
+  const handleRemoveFromShoppingList = (itemId: string) => {
+    updateItem(itemId, {
+      status: null,
     });
   };
 
@@ -136,18 +151,37 @@ export default function PlanningPage() {
   };
 
   const editingItem = editingId ? items.find(item => item.id === editingId) : null;
+  const cartCount = items.filter((item) => item.status === 'pending').length;
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="space-y-6">
+      <div className="mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+        <div className="space-y-5">
           {/* Header */}
           <section>
-            <h2 className="text-2xl font-semibold text-gray-100 mb-4 text-center md:text-left">
-              Planning
-            </h2>
-            <p className="text-gray-400 mb-6 text-center md:text-left">
-              Build your shopping list by adding items you need
+            <div className="mb-2 flex items-start justify-between gap-3">
+              <div className="text-left">
+                <h2 className="text-left text-xs font-bold uppercase tracking-[0.16em] text-[var(--action)]">
+                  Plan your shop
+                </h2>
+              </div>
+              <div className="hidden items-center gap-3 md:flex">
+                <span className="rounded-full border border-[var(--separator)] bg-[var(--surface)] px-3 py-1.5 text-sm font-medium text-[var(--muted)]">
+                  {cartCount} {cartCount === 1 ? 'item' : 'items'} in cart
+                </span>
+                <button
+                  onClick={handleOpenNewItemModal}
+                  className="hh-action hh-focus inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors active:bg-[#c85e2e]"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  New item
+                </button>
+              </div>
+            </div>
+            <p className="mb-4 text-[var(--muted)] md:text-lg">
+              {cartCount > 0 ? `${cartCount} ${cartCount === 1 ? 'item' : 'items'} in your cart` : 'Add items when you are ready to shop.'}
             </p>
 
             {/* Search and type filter */}
@@ -158,10 +192,10 @@ export default function PlanningPage() {
                   placeholder="Search items..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 pl-10 border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="hh-field min-h-12 w-full rounded-xl border px-4 py-3 pl-10"
                 />
                 <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500"
+                  className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--subtle)]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -174,7 +208,8 @@ export default function PlanningPage() {
                   />
                 </svg>
               </div>
-              <div className="sm:w-48">
+              <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-3">
+              <div className="min-w-0 sm:w-48">
                 <label htmlFor="type-filter" className="sr-only">
                   Filter by item type
                 </label>
@@ -182,7 +217,7 @@ export default function PlanningPage() {
                   id="type-filter"
                   value={selectedType}
                   onChange={(event) => setSelectedType(event.target.value as ItemType | 'all')}
-                  className="min-h-11 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 text-gray-100 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                  className="hh-field min-h-12 w-full rounded-xl border px-3"
                 >
                   <option value="all">All Types</option>
                   <option value="grocery">Grocery</option>
@@ -191,14 +226,31 @@ export default function PlanningPage() {
                   <option value="other">Other</option>
                 </select>
               </div>
+              <div className="min-w-0 sm:w-48">
+                <label htmlFor="tag-filter" className="sr-only">
+                  Filter by tag
+                </label>
+                <select
+                  id="tag-filter"
+                  value={selectedTag}
+                  onChange={(event) => setSelectedTag(event.target.value)}
+                  className="hh-field min-h-12 w-full rounded-xl border px-3"
+                >
+                  <option value="all">All Tags</option>
+                  {tags.map((tag) => (
+                    <option key={tag} value={tag}>{tag}</option>
+                  ))}
+                </select>
+              </div>
+              </div>
             </div>
 
             {/* Items List */}
-            <div className="bg-gray-800 rounded-lg border border-gray-700 shadow-sm">
+            <div className="overflow-hidden rounded-2xl border border-[var(--separator)] bg-[var(--surface)]">
               {filteredItems.length === 0 ? (
-                <div className="p-8 text-center">
+                <div className="p-10 text-center">
                   <svg
-                    className="mx-auto h-12 w-12 text-gray-600 mb-4"
+                    className="mx-auto mb-4 h-12 w-12 text-[var(--subtle)]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -210,34 +262,19 @@ export default function PlanningPage() {
                       d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
                     />
                   </svg>
-                  <h3 className="text-lg font-medium text-gray-100 mb-2">
+                  <h3 className="mb-2 text-lg font-medium text-[var(--foreground)]">
                     No items found
                   </h3>
-                  <p className="text-gray-400">
-                    {searchQuery || selectedType !== 'all'
-                      ? 'Try a different search term or type'
+                  <p className="text-[var(--muted)]">
+                    {searchQuery || selectedType !== 'all' || selectedTag !== 'all'
+                      ? 'Try a different search term, type, or tag'
                       : 'Go to All Items to add items to your master list'}
                   </p>
                 </div>
               ) : (
                 <>
-                  {/* Column Headers */}
-                  <div className="px-4 py-3 bg-gray-800 border-b border-gray-600">
-                    <div className="grid grid-cols-[2fr_1fr_auto] gap-3 items-center">
-                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                        Item
-                      </span>
-                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                        Tags
-                      </span>
-                      <span className="w-11 text-xs font-bold text-gray-300 uppercase tracking-wide text-right">
-                        List
-                      </span>
-                    </div>
-                  </div>
-
                   {/* Items List */}
-                  <div className="divide-y divide-gray-700">
+                  <div className="divide-y divide-[var(--separator)]">
                   {filteredItems.map((item) => {
                     const isAddedToShoppingList = item.status === 'pending';
                     const isItemSwiped = swipedItemId === item.id;
@@ -249,10 +286,10 @@ export default function PlanningPage() {
                       >
                         {/* Edit button revealed on swipe (mobile only) */}
                         {isTouchDevice && (
-                          <div className="absolute right-0 top-0 bottom-0 flex bg-gray-700 w-1/4">
+                          <div className="absolute right-0 top-0 bottom-0 flex w-1/4 bg-[var(--surface-hover)]">
                             <button
                               onClick={() => handleOpenEditModal(item.id)}
-                              className="h-full w-full bg-blue-600 text-white font-medium flex items-center justify-center"
+                              className="h-full w-full bg-[var(--action)] font-medium text-[var(--on-action)]"
                             >
                               Edit
                             </button>
@@ -261,62 +298,56 @@ export default function PlanningPage() {
 
                         {/* Main content that slides */}
                         <div
-                          className={`p-4 bg-gray-800 hover:bg-gray-700 transition-all duration-200 ease-out ${
+                          className={`bg-[var(--surface)] px-4 py-3 transition-all duration-200 ease-out hover:bg-[var(--surface-hover)] ${
                             isItemSwiped ? '-translate-x-[25%]' : 'translate-x-0'
                           }`}
                           onTouchStart={(e) => handleTouchStart(e, item.id)}
                           onTouchMove={(e) => handleTouchMove(e, item.id)}
                           onTouchEnd={(e) => handleTouchEnd(e, item.id)}
                         >
-                        <div className="grid grid-cols-[2fr_1fr_auto] gap-3 items-center">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] sm:gap-3">
                           {/* Item Name */}
                           <div className="min-w-0">
-                            <h3 className="text-base font-semibold text-white truncate">
+                            <h3 className="truncate text-base font-semibold text-[var(--foreground)]">
                               {item.name}
                             </h3>
                             {item.stores.length > 0 && (
-                              <div className="mt-1 flex min-w-0 items-center gap-1" aria-label={`Stores: ${item.stores.join(', ')}`}>
-                                <span className="min-w-0 truncate rounded bg-purple-900 px-2 py-0.5 text-xs font-medium text-purple-200 whitespace-nowrap">
-                                  {item.stores[0]}
-                                </span>
-                                {item.stores.length > 1 && (
-                                  <span className="shrink-0 text-xs text-purple-200" aria-label={`${item.stores.length - 1} additional stores`}>
-                                    +{item.stores.length - 1}
+                              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5">
+                                {item.stores.length > 0 && (
+                                  <span className="min-w-0 max-w-full truncate text-sm text-[var(--muted)]" aria-label={`Stores: ${item.stores.join(', ')}`}>
+                                    {item.stores[0]}{item.stores.length > 1 ? ` +${item.stores.length - 1}` : ''}
                                   </span>
                                 )}
                               </div>
                             )}
                           </div>
 
-                          {/* Tags */}
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {item.tags && item.tags.length > 0 ? (
-                              item.tags.map((tag) => (
-                                <span
-                                  key={`tag-${tag}`}
-                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-300 whitespace-nowrap"
-                                >
-                                  {tag}
-                                </span>
-                              ))
-                            ) : null}
+                          <div className="flex min-w-0 items-center gap-4 sm:contents">
+                          <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+                            {item.tags?.map((tag) => (
+                              <span key={`tag-${tag}`} className="truncate rounded-full border border-[var(--separator)] bg-[var(--background)] px-2 py-0.5 text-xs font-medium text-[var(--muted)]">
+                                {tag}
+                              </span>
+                            ))}
                           </div>
 
-                          <div className="flex justify-end w-11">
+                          <div className="flex w-11 shrink-0 justify-end">
                             <button
-                              onClick={() => handleAddToShoppingList(item.id)}
-                              disabled={isAddedToShoppingList}
-                              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                              onClick={() => isAddedToShoppingList
+                                ? handleRemoveFromShoppingList(item.id)
+                                : handleAddToShoppingList(item.id)}
+                              className={`hh-focus flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
                                 isAddedToShoppingList
-                                  ? 'cursor-default bg-gray-700 text-gray-400'
-                                  : 'bg-green-700 text-white hover:bg-green-600 active:bg-green-800'
+                                  ? 'bg-[var(--separator)] text-[var(--foreground)] hover:bg-[var(--subtle)] hover:text-[var(--background)]'
+                                  : 'hh-action active:bg-[#c85e2e]'
                               }`}
-                              aria-label={isAddedToShoppingList ? `${item.name} is already on the shopping list` : `Add ${item.name} to the shopping list`}
+                              aria-label={isAddedToShoppingList ? `Remove ${item.name} from the shopping list` : `Add ${item.name} to the shopping list`}
                             >
                               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isAddedToShoppingList ? 'M5 12h14' : 'M12 4v16m8-8H4'} />
                               </svg>
                             </button>
+                          </div>
                           </div>
                         </div>
                         </div>
@@ -330,7 +361,7 @@ export default function PlanningPage() {
 
             {/* Item Count */}
             {filteredItems.length > 0 && (
-              <div className="mt-4 text-sm text-gray-400 text-center">
+              <div className="mt-4 text-center text-sm text-[var(--muted)]">
                 Showing {filteredItems.length} of {items.length} items
               </div>
             )}
@@ -340,12 +371,13 @@ export default function PlanningPage() {
 
       <button
         onClick={handleOpenNewItemModal}
-        className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-green-600 text-white shadow-lg transition-colors hover:bg-green-500 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-gray-900 md:bottom-6 md:right-6"
-        aria-label="Add a new item to the shopping list"
+        className="hh-action hh-focus fixed right-3 top-2 z-[60] inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold transition-colors active:bg-[#c85e2e] md:hidden"
+        aria-label="Create a new catalog item and add it to the shopping list"
       >
-        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
+        New item
       </button>
 
       <Modal

@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #29231f;
+  --foreground: #f5f1e7;
+  --surface: #393029;
+  --surface-hover: #453a32;
+  --muted: #c6b7a5;
+  --subtle: #9d8d7c;
+  --separator: #504238;
+  --action: #e8783f;
+  --action-hover: #f18b54;
+  --on-action: #29231f;
+  --cart-state: #859269;
+  --brand: #8fa86d;
 }
 
 @theme inline {
@@ -12,15 +22,58 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+a,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hh-surface {
+  background: var(--surface);
+  border-color: var(--separator);
+}
+
+.hh-field {
+  background: var(--surface);
+  border-color: var(--separator);
+  color: var(--foreground);
+}
+
+.hh-field::placeholder {
+  color: var(--subtle);
+}
+
+.hh-field:focus {
+  border-color: var(--action);
+  outline: 2px solid var(--action);
+  outline-offset: 2px;
+}
+
+select.hh-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c6b7a5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 0.875rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+.hh-action {
+  background: var(--action);
+  color: var(--on-action);
+}
+
+.hh-action:hover {
+  background: var(--action-hover);
+}
+
+.hh-focus:focus-visible {
+  outline: 2px solid var(--action-hover);
+  outline-offset: 2px;
 }

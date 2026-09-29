@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useGroceryItems } from '@/hooks/useGroceryItems';
 
 interface NavItem {
   name: string;
@@ -50,24 +51,31 @@ const navItems: NavItem[] = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { items } = useGroceryItems();
+  const cartCount = items.filter((item) => item.status === 'pending').length;
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 z-50">
-      <div className="grid grid-cols-4 h-16">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--separator)] bg-[var(--surface)] pb-[env(safe-area-inset-bottom)]">
+      <div className="grid h-[4.5rem] grid-cols-4 px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              className={`hh-focus relative my-2 flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl transition-colors ${
                 isActive
-                  ? 'text-green-400'
-                  : 'text-gray-400'
+                  ? 'bg-[var(--action)] text-[var(--on-action)]'
+                  : 'text-[var(--muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]'
               }`}
             >
               {item.icon}
-              <span className="text-xs font-medium">{item.name}</span>
+              <span className="text-[11px] font-semibold">{item.name}</span>
+              {item.href === '/shopping' && cartCount > 0 && (
+                <span className="absolute right-2 top-1 rounded-full bg-[var(--cart-state)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--background)]">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           );
         })}

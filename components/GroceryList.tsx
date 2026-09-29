@@ -62,7 +62,7 @@ export function GroceryList({
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="py-12 text-center text-[var(--muted)]">
         <p className="text-lg">No items in your list yet.</p>
         <p className="text-sm mt-2">Add your first item to get started!</p>
       </div>
@@ -76,17 +76,17 @@ export function GroceryList({
         return (
           <div
             key={item.id}
-            className="bg-gray-800 rounded-lg border border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative"
+            className="relative overflow-hidden rounded-2xl border border-[var(--separator)] bg-[var(--surface)]"
           >
             {/* Action buttons revealed on swipe (mobile only) */}
             {isTouchDevice && (
-              <div className="absolute right-0 top-0 bottom-0 flex bg-gray-700 w-1/2">
+              <div className="absolute right-0 top-0 bottom-0 flex w-1/2 bg-[var(--surface-hover)]">
                 <button
                   onClick={() => {
                     onEdit(item.id);
                     setSwipedItemId(null);
                   }}
-                  className="h-full w-1/2 bg-blue-600 text-white font-medium flex items-center justify-center"
+                  className="flex h-full w-1/2 items-center justify-center bg-[var(--action)] font-medium text-[var(--on-action)]"
                 >
                   Edit
                 </button>
@@ -95,7 +95,7 @@ export function GroceryList({
                     onDelete(item.id);
                     setSwipedItemId(null);
                   }}
-                  className="h-full w-1/2 bg-red-600 text-white font-medium flex items-center justify-center"
+                  className="flex h-full w-1/2 items-center justify-center bg-[#7f3b32] font-medium text-[var(--foreground)]"
                 >
                   Delete
                 </button>
@@ -104,7 +104,7 @@ export function GroceryList({
 
             {/* Main content that slides */}
             <div
-              className={`p-4 bg-gray-800 flex items-start gap-3 transition-transform duration-200 ease-out ${
+              className={`flex items-start gap-3 bg-[var(--surface)] px-4 py-3 transition-transform duration-200 ease-out ${
                 isItemSwiped ? '-translate-x-40' : 'translate-x-0'
               }`}
               onTouchStart={(e) => handleTouchStart(e, item.id)}
@@ -117,14 +117,14 @@ export function GroceryList({
                   type="checkbox"
                   checked={selectedItems?.has(item.id) || false}
                   onChange={() => onToggleSelection(item.id)}
-                  className="w-5 h-5 text-green-600 border-gray-700 rounded focus:ring-green-500"
+                  className="h-5 w-5 rounded border-[var(--separator)] accent-[var(--action)]"
                 />
               </div>
             )}
             <div className="flex-1 min-w-0">
               {/* Item name with action buttons */}
               <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 className="text-lg font-semibold text-white break-words flex-1">
+                <h3 className="flex-1 break-words text-lg font-semibold text-[var(--foreground)]">
                   {item.name}
                 </h3>
                 {/* Desktop-only buttons */}
@@ -132,54 +132,44 @@ export function GroceryList({
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => onEdit(item.id)}
-                      className="text-xl hover:scale-110 transition-transform border border-gray-600 rounded px-2 py-1 hover:border-blue-500"
-                      title="Edit item"
+                      className="hh-focus flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--separator)] text-[var(--muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
+                      aria-label={`Edit ${item.name}`}
                     >
-                      ✏️
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m16.862 3.487 3.651 3.651M4 20l4.586-1.414L19.75 7.422a2.582 2.582 0 0 0-3.651-3.651L4.935 14.935 4 20Z" /></svg>
                     </button>
                     <button
                       onClick={() => onDelete(item.id)}
-                      className="text-xl hover:scale-110 transition-transform border border-gray-600 rounded px-2 py-1 hover:border-red-500"
-                      title="Delete item"
+                      className="hh-focus flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--separator)] text-[var(--muted)] hover:bg-[#7f3b32] hover:text-[var(--foreground)]"
+                      aria-label={`Delete ${item.name}`}
                     >
-                      🗑️
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6h18m-14 0v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V6m-6 4v6m4-6v6M9 6l1-3h4l1 3" /></svg>
                     </button>
                   </div>
                 )}
               </div>
 
               {/* Quantity */}
-              <p className="text-sm text-gray-300 font-medium mb-2">
+              <p className="mb-2 text-sm font-medium text-[var(--muted)]">
                 {item.quantity} {item.unit}
-                {item.aisle && <span className="text-gray-400 ml-2">• {item.aisle}</span>}
+                {item.aisle && <span className="ml-2 text-[var(--subtle)]">• {item.aisle}</span>}
               </p>
 
               {/* Status, Type, Tags, and Stores on one line */}
-              <div className="flex flex-wrap items-center gap-2 mb-3">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${
                     item.status === 'purchased'
-                      ? 'bg-green-100 text-green-800'
+                      ? 'bg-[var(--brand)] text-[var(--background)]'
                       : item.status === 'skipped'
-                      ? 'bg-yellow-100 text-yellow-800'
+                      ? 'bg-[var(--subtle)] text-[var(--background)]'
                       : item.status === 'pending'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-700 text-gray-400'
+                      ? 'bg-[var(--action)] text-[var(--on-action)]'
+                      : 'bg-[var(--separator)] text-[var(--muted)]'
                   }`}
                 >
                   {item.status ?? 'none'}
                 </span>
-                <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${
-                    item.type === 'grocery'
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : item.type === 'supply'
-                      ? 'bg-orange-100 text-orange-700'
-                      : item.type === 'clothing'
-                      ? 'bg-pink-100 text-pink-700'
-                      : 'bg-slate-100 text-slate-700'
-                  }`}
-                >
+                <span className="inline-flex items-center rounded border border-[var(--separator)] bg-[var(--background)] px-2 py-0.5 text-xs font-medium whitespace-nowrap text-[var(--muted)]">
                   {item.type}
                 </span>
                 {item.stores.length > 0 && (
@@ -187,7 +177,7 @@ export function GroceryList({
                     {item.stores.map((store) => (
                       <span
                         key={store}
-                        className="inline-flex items-center px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs"
+                        className="inline-flex items-center rounded-full border border-[var(--separator)] bg-[var(--background)] px-2 py-0.5 text-xs text-[var(--muted)]"
                       >
                         {store}
                       </span>
@@ -199,7 +189,7 @@ export function GroceryList({
                     {item.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs"
+                        className="inline-flex items-center rounded-full border border-[var(--separator)] bg-[var(--background)] px-2 py-0.5 text-xs text-[var(--muted)]"
                       >
                         {tag}
                       </span>
@@ -213,7 +203,7 @@ export function GroceryList({
                 <select
                   value={item.status ?? ''}
                   onChange={(e) => onStatusChange(item.id, e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
-                  className="text-sm border border-gray-700 bg-gray-800 text-gray-100 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="hh-field min-h-10 rounded-lg border px-2 text-sm"
                 >
                   <option value="">None</option>
                   <option value="pending">Pending</option>

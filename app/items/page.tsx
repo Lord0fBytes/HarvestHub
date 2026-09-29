@@ -252,26 +252,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
         {items.length === 0 && (
-          <div className="flex justify-end mb-4">
+          <div className="mb-4 flex justify-end">
             <button
               onClick={loadSampleData}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+              className="hh-action hh-focus min-h-11 rounded-xl px-4 text-sm font-semibold"
             >
               Load Sample Data
             </button>
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           <section>
-            <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-3">
-              <h2 className="text-2xl font-semibold text-gray-100 text-center md:text-left">
-                Shopping List
+            <div className="mb-5 flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
+              <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--action)]">
+                All Items
               </h2>
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-[var(--muted)]">
                   {filteredAndSortedItems.length} of {items.length} {items.length === 1 ? 'item' : 'items'}
                 </span>
                 {items.length > 0 && (
@@ -282,10 +282,10 @@ export default function Home() {
                         setSelectedItems(new Set());
                       }
                     }}
-                    className={`text-sm px-3 py-1 rounded-md ${
+                    className={`hh-focus min-h-11 rounded-xl px-3 text-sm font-semibold transition-colors ${
                       selectedItems.size > 0
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-gray-200 text-gray-300 hover:bg-gray-300'
+                        ? 'hh-action'
+                        : 'border border-[var(--separator)] bg-[var(--surface)] text-[var(--muted)] hover:bg-[var(--surface-hover)]'
                     }`}
                   >
                     {selectedItems.size > 0 ? `Cancel (${selectedItems.size} selected)` : 'Select Items'}
@@ -293,7 +293,7 @@ export default function Home() {
                 )}
                 <button
                   onClick={handleOpenAddModal}
-                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm font-medium"
+                  className="hh-action hh-focus min-h-11 rounded-xl px-4 text-sm font-semibold"
                 >
                   + Add Item
                 </button>
@@ -302,40 +302,40 @@ export default function Home() {
 
             {/* Statistics */}
             {items.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-                <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-sm">
-                  <div className="text-2xl font-bold text-gray-100">{stats.total}</div>
-                  <div className="text-sm text-gray-400">Total Items</div>
+              <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
+                <div className="rounded-2xl border border-[var(--separator)] bg-[var(--surface)] p-3 sm:p-4">
+                  <div className="text-2xl font-bold text-[var(--foreground)]">{stats.total}</div>
+                  <div className="text-sm text-[var(--muted)]">Total Items</div>
                 </div>
-                <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-sm">
-                  <div className="text-2xl font-bold text-gray-400">{stats.pending}</div>
-                  <div className="text-sm text-gray-400">Pending</div>
+                <div className="rounded-2xl border border-[var(--separator)] bg-[var(--surface)] p-3 sm:p-4">
+                  <div className="text-2xl font-bold text-[var(--action)]">{stats.pending}</div>
+                  <div className="text-sm text-[var(--muted)]">Pending</div>
                 </div>
-                <div className="bg-gray-800 rounded-lg border border-green-200 p-4 shadow-sm">
-                  <div className="text-2xl font-bold text-green-600">{stats.purchased}</div>
-                  <div className="text-sm text-gray-400">Purchased</div>
+                <div className="rounded-2xl border border-[var(--separator)] bg-[var(--surface)] p-3 sm:p-4">
+                  <div className="text-2xl font-bold text-[var(--brand)]">{stats.purchased}</div>
+                  <div className="text-sm text-[var(--muted)]">Purchased</div>
                 </div>
-                <div className="bg-gray-800 rounded-lg border border-yellow-200 p-4 shadow-sm">
-                  <div className="text-2xl font-bold text-yellow-600">{stats.skipped}</div>
-                  <div className="text-sm text-gray-400">Skipped</div>
+                <div className="rounded-2xl border border-[var(--separator)] bg-[var(--surface)] p-3 sm:p-4">
+                  <div className="text-2xl font-bold text-[var(--subtle)]">{stats.skipped}</div>
+                  <div className="text-sm text-[var(--muted)]">Skipped</div>
                 </div>
               </div>
             )}
 
             {/* Developer Tools */}
             {items.length > 0 && (
-              <div className="bg-gray-800 rounded-lg border border-gray-700 p-3 shadow-sm mb-4">
+              <div className="mb-4 rounded-2xl border border-[var(--separator)] bg-[var(--surface)] p-3">
                 <div className="flex items-center justify-center gap-3 flex-wrap">
-                  <span className="text-xs text-gray-400">Dev Tools:</span>
+                  <span className="text-xs text-[var(--muted)]">Dev Tools:</span>
                   <button
                     onClick={handleResetStatuses}
-                    className="px-3 py-1.5 bg-red-900 text-white rounded hover:bg-red-800 active:bg-red-700 transition-colors text-xs font-medium"
+                    className="rounded-lg bg-[#7f3b32] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[#99483c]"
                   >
                     Reset Statuses
                   </button>
                   <button
                     onClick={handleResetQuantities}
-                    className="px-3 py-1.5 bg-orange-900 text-white rounded hover:bg-orange-800 active:bg-orange-700 transition-colors text-xs font-medium"
+                    className="rounded-lg bg-[var(--separator)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface-hover)]"
                   >
                     Reset Quantities
                   </button>
@@ -351,28 +351,28 @@ export default function Home() {
                   placeholder="Search items by name, store, aisle, or tags..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
+                  className="hh-field min-h-12 w-full rounded-xl border px-4 py-3 text-base"
                 />
               </div>
             )}
 
             {/* Bulk Actions */}
             {selectedItems.size > 0 && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <div className="mb-4 rounded-2xl border border-[var(--separator)] bg-[var(--surface-hover)] p-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="text-sm font-medium text-green-900">
+                  <span className="text-sm font-medium text-[var(--foreground)]">
                     {selectedItems.size} {selectedItems.size === 1 ? 'item' : 'items'} selected
                   </span>
                   <div className="flex gap-2">
                     <button
                       onClick={bulkMarkAsPurchased}
-                      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
+                      className="hh-action hh-focus min-h-11 rounded-xl px-4 text-sm font-semibold"
                     >
                       Mark as Purchased
                     </button>
                     <button
                       onClick={bulkDelete}
-                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium"
+                      className="min-h-11 rounded-xl bg-[#7f3b32] px-4 text-sm font-semibold text-[var(--foreground)] hover:bg-[#99483c]"
                     >
                       Delete Selected
                     </button>
@@ -383,18 +383,18 @@ export default function Home() {
 
             {/* Filters and Sort */}
             {items.length > 0 && (
-              <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-sm mb-4">
+              <div className="mb-4 rounded-2xl border border-[var(--separator)] bg-[var(--surface)] p-4">
                 <div className="space-y-4">
                   {/* Sort */}
                   <div>
-                    <label htmlFor="sort" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label htmlFor="sort" className="mb-2 block text-sm font-medium text-[var(--muted)]">
                       Sort by
                     </label>
                     <select
                       id="sort"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as SortOption)}
-                      className="w-full sm:w-auto px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="hh-field min-h-11 w-full rounded-xl border px-3 sm:w-auto"
                     >
                       <option value="dateAdded">Date Added (Newest)</option>
                       <option value="name">Name (A-Z)</option>
@@ -406,14 +406,14 @@ export default function Home() {
                   {/* Type, Store, and Status Filters */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label htmlFor="type-filter" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label htmlFor="type-filter" className="mb-2 block text-sm font-medium text-[var(--muted)]">
                         Filter by Type
                       </label>
                       <select
                         id="type-filter"
                         value={selectedType}
                         onChange={(e) => setSelectedType(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        className="hh-field min-h-11 w-full rounded-xl border px-3"
                       >
                         <option value="">All Types</option>
                         <option value="grocery">Grocery</option>
@@ -425,14 +425,14 @@ export default function Home() {
 
                     {allStores.length > 0 && (
                       <div>
-                        <label htmlFor="store-filter" className="block text-sm font-medium text-gray-300 mb-2">
+                        <label htmlFor="store-filter" className="mb-2 block text-sm font-medium text-[var(--muted)]">
                           Filter by Store
                         </label>
                         <select
                           id="store-filter"
                           value={selectedStore}
                           onChange={(e) => setSelectedStore(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          className="hh-field min-h-11 w-full rounded-xl border px-3"
                         >
                           <option value="">All Stores</option>
                           {allStores.map((store) => (
@@ -445,14 +445,14 @@ export default function Home() {
                     )}
 
                     <div>
-                      <label htmlFor="status-filter" className="block text-sm font-medium text-gray-300 mb-2">
+                      <label htmlFor="status-filter" className="mb-2 block text-sm font-medium text-[var(--muted)]">
                         Filter by Status
                       </label>
                       <select
                         id="status-filter"
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        className="hh-field min-h-11 w-full rounded-xl border px-3"
                       >
                         <option value="">All Statuses</option>
                         <option value="null">None</option>
@@ -467,13 +467,13 @@ export default function Home() {
                   {allTags.length > 0 && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-300">
+                        <label className="block text-sm font-medium text-[var(--muted)]">
                           Filter by Tags
                         </label>
                         {(selectedTags.length > 0 || selectedStore || selectedType || selectedStatus || searchQuery) && (
                           <button
                             onClick={clearFilters}
-                            className="text-sm text-blue-600 hover:text-blue-800"
+                            className="hh-focus text-sm font-medium text-[var(--action)] hover:text-[var(--action-hover)]"
                           >
                             Clear All Filters
                           </button>
@@ -484,10 +484,10 @@ export default function Home() {
                           <button
                             key={tag}
                             onClick={() => toggleTag(tag)}
-                            className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                            className={`hh-focus rounded-full border px-3 py-1 text-sm transition-colors ${
                               selectedTags.includes(tag)
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                ? 'border-[var(--action)] bg-[var(--action)] text-[var(--on-action)]'
+                                : 'border-[var(--separator)] bg-[var(--background)] text-[var(--muted)] hover:bg-[var(--surface-hover)]'
                             }`}
                           >
                             {tag}
@@ -508,9 +508,9 @@ export default function Home() {
                     type="checkbox"
                     checked={selectedItems.size === filteredAndSortedItems.length}
                     onChange={toggleAllItems}
-                    className="w-5 h-5 text-green-600 border-gray-700 rounded focus:ring-green-500"
+                    className="h-5 w-5 rounded border-[var(--separator)] accent-[var(--action)]"
                   />
-                  <span className="text-sm font-medium text-gray-300">
+                  <span className="text-sm font-medium text-[var(--muted)]">
                     Select All ({filteredAndSortedItems.length})
                   </span>
                 </label>
