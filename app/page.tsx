@@ -228,7 +228,7 @@ export default function PlanningPage() {
               </div>
               <div className="min-w-0 sm:w-48">
                 <label htmlFor="tag-filter" className="sr-only">
-                  Filter by tag
+                  Filter by list
                 </label>
                 <select
                   id="tag-filter"
@@ -236,7 +236,7 @@ export default function PlanningPage() {
                   onChange={(event) => setSelectedTag(event.target.value)}
                   className="hh-field min-h-12 w-full rounded-xl border px-3"
                 >
-                  <option value="all">All Tags</option>
+                  <option value="all">All Lists</option>
                   {tags.map((tag) => (
                     <option key={tag} value={tag}>{tag}</option>
                   ))}
@@ -267,7 +267,7 @@ export default function PlanningPage() {
                   </h3>
                   <p className="text-[var(--muted)]">
                     {searchQuery || selectedType !== 'all' || selectedTag !== 'all'
-                      ? 'Try a different search term, type, or tag'
+                      ? 'Try a different search term, type, or list'
                       : 'Go to All Items to add items to your master list'}
                   </p>
                 </div>

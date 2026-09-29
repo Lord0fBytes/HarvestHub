@@ -348,7 +348,7 @@ export default function Home() {
               <div className="mb-4">
                 <input
                   type="text"
-                  placeholder="Search items by name, store, aisle, or tags..."
+                placeholder="Search items by name, store, aisle, or lists..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="hh-field min-h-12 w-full rounded-xl border px-4 py-3 text-base"
@@ -463,12 +463,12 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Tag Filter */}
+                  {/* List filter */}
                   {allTags.length > 0 && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="block text-sm font-medium text-[var(--muted)]">
-                          Filter by Tags
+                          Filter by Lists
                         </label>
                         {(selectedTags.length > 0 || selectedStore || selectedType || selectedStatus || searchQuery) && (
                           <button

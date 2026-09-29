@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { GroceryItem, CreateGroceryItemInput } from '@/types/grocery';
+import { useGroceryItems } from '@/contexts/GroceryItemsContext';
 
 interface ItemFormProps {
   onSubmit: (item: CreateGroceryItemInput) => void;
@@ -11,6 +12,7 @@ interface ItemFormProps {
 }
 
 export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add Item' }: ItemFormProps) {
+  const { items } = useGroceryItems();
   const [name, setName] = useState(initialData?.name || '');
   const [status, setStatus] = useState<GroceryItem['status']>(initialData?.status ?? null);
   const [type, setType] = useState<GroceryItem['type']>(initialData?.type || 'grocery');
@@ -19,6 +21,18 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
   const [aisle, setAisle] = useState(initialData?.aisle || '');
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [tagInput, setTagInput] = useState('');
+
+  const availableStores = useMemo(() => Array.from(
+    new Set(items.flatMap((item) => item.stores ?? []))
+  )
+    .filter((store) => !stores.includes(store))
+    .sort((a, b) => a.localeCompare(b)), [items, stores]);
+
+  const availableLists = useMemo(() => Array.from(
+    new Set(items.flatMap((item) => item.tags ?? []))
+  )
+    .filter((list) => !tags.includes(list))
+    .sort((a, b) => a.localeCompare(b)), [items, tags]);
 
   useEffect(() => {
     if (initialData) {
@@ -70,6 +84,17 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
     setStores(stores.filter(s => s !== store));
   };
 
+  const handleStoreKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddStore();
+    }
+
+    if (e.key === 'Backspace' && !storeInput && stores.length > 0) {
+      setStores(stores.slice(0, -1));
+    }
+  };
+
   const handleAddTag = () => {
     const trimmedTag = tagInput.trim().toLowerCase();
     if (trimmedTag && !tags.includes(trimmedTag)) {
@@ -87,13 +112,17 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
       e.preventDefault();
       handleAddTag();
     }
+
+    if (e.key === 'Backspace' && !tagInput && tags.length > 0) {
+      setTags(tags.slice(0, -1));
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg border border-gray-700 p-6 shadow-sm">
-      <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="space-y-5">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="name" className="mb-2 block text-xs font-bold uppercase tracking-[0.12em] text-[var(--subtle)]">
             Item Name *
           </label>
           <input
@@ -103,20 +132,20 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Bananas"
             required
-            className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="hh-field min-h-11 w-full rounded-xl border px-3 py-2.5 text-base"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="type" className="mb-2 block text-xs font-bold uppercase tracking-[0.12em] text-[var(--subtle)]">
               Type *
             </label>
             <select
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value as GroceryItem['type'])}
-              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="hh-field min-h-11 w-full rounded-xl border px-3 py-2.5 text-base"
             >
               <option value="grocery">Grocery</option>
               <option value="supply">Supply</option>
@@ -126,7 +155,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
           </div>
 
           <div>
-            <label htmlFor="aisle" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="aisle" className="mb-2 block text-xs font-bold uppercase tracking-[0.12em] text-[var(--subtle)]">
               Aisle/Row
             </label>
             <input
@@ -135,102 +164,128 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
               value={aisle}
               onChange={(e) => setAisle(e.target.value)}
               placeholder="e.g., Aisle 5, Produce"
-              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="hh-field min-h-11 w-full rounded-xl border px-3 py-2.5 text-base"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="stores" className="block text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="stores" className="mb-2 block text-xs font-bold uppercase tracking-[0.12em] text-[var(--subtle)]">
             Stores
           </label>
           <div className="space-y-2">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                id="stores"
-                value={storeInput}
-                onChange={(e) => setStoreInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddStore();
-                  }
-                }}
-                placeholder="e.g., Costco, Trader Joe's"
-                className="flex-1 px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-              <button
-                type="button"
-                onClick={handleAddStore}
-                className="min-h-11 rounded-md bg-green-700 px-4 text-white transition-colors hover:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                Add
-              </button>
-            </div>
-            {stores.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+            <div className="flex items-start gap-2">
+              <div className="hh-field hh-token-field flex min-h-11 min-w-0 flex-1 flex-wrap items-center gap-1.5 rounded-xl border px-2 py-1.5">
                 {stores.map((store) => (
                   <span
                     key={store}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
+                    className="inline-flex max-w-full items-center gap-1 rounded-full border border-[var(--separator)] bg-[var(--background)] py-0.5 pl-2.5 pr-0.5 text-sm text-[var(--brand)]"
                   >
-                    {store}
+                    <span className="min-w-0 break-words">{store}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveStore(store)}
-                      className="hover:text-purple-900"
+                      className="hh-focus inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
+                      aria-label={`Remove ${store} store`}
                     >
                       ×
                     </button>
                   </span>
                 ))}
+                <input
+                  type="text"
+                  id="stores"
+                  value={storeInput}
+                  onChange={(e) => setStoreInput(e.target.value)}
+                  onKeyDown={handleStoreKeyDown}
+                  placeholder={stores.length > 0 ? 'Add another store' : "e.g., Costco, Trader Joe's"}
+                  className="min-h-8 min-w-36 flex-1 bg-transparent px-1 py-1 text-base outline-none placeholder:text-[var(--subtle)]"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleAddStore}
+                className="hh-action hh-focus min-h-11 rounded-xl px-4 text-sm font-semibold transition-colors active:bg-[#c85e2e]"
+              >
+                Add
+              </button>
+            </div>
+            {availableStores.length > 0 && (
+              <div className="pt-0.5">
+                <div className="flex flex-wrap gap-2">
+                  {availableStores.map((store) => (
+                    <button
+                      key={store}
+                      type="button"
+                      onClick={() => setStores([...stores, store])}
+                      className="hh-focus min-h-9 rounded-full border border-[var(--separator)] bg-[var(--surface)] px-3 text-sm font-medium text-[var(--brand)] transition-colors hover:bg-[var(--surface-hover)] active:bg-[var(--separator)]"
+                      aria-label={`Add ${store} store`}
+                    >
+                      {store}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         </div>
 
         <div>
-          <label htmlFor="tags" className="block text-sm font-medium text-gray-300 mb-1">
-            Tags
+          <label htmlFor="tags" className="mb-2 block text-xs font-bold uppercase tracking-[0.12em] text-[var(--subtle)]">
+            Lists
           </label>
           <div className="space-y-2">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                id="tags"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagKeyDown}
-                placeholder="Add a tag (e.g., produce, dairy)"
-                className="flex-1 px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-              <button
-                type="button"
-                onClick={handleAddTag}
-                className="min-h-11 rounded-md bg-green-700 px-4 text-white transition-colors hover:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                Add
-              </button>
-            </div>
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+            <div className="flex items-start gap-2">
+              <div className="hh-field hh-token-field flex min-h-11 min-w-0 flex-1 flex-wrap items-center gap-1.5 rounded-xl border px-2 py-1.5">
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                    className="inline-flex max-w-full items-center gap-1 rounded-full border border-[var(--separator)] bg-[var(--background)] py-0.5 pl-2.5 pr-0.5 text-sm text-[var(--brand)]"
                   >
-                    {tag}
+                    <span className="min-w-0 break-words">{tag}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
-                      className="hover:text-blue-900 focus:outline-none"
-                      aria-label={`Remove ${tag} tag`}
+                      className="hh-focus inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
+                      aria-label={`Remove ${tag} list`}
                     >
                       ×
                     </button>
                   </span>
                 ))}
+                <input
+                  type="text"
+                  id="tags"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagKeyDown}
+                  placeholder={tags.length > 0 ? 'Add another list' : 'Add to a list (e.g., produce, dairy)'}
+                  className="min-h-8 min-w-36 flex-1 bg-transparent px-1 py-1 text-base outline-none placeholder:text-[var(--subtle)]"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleAddTag}
+                className="hh-action hh-focus min-h-11 rounded-xl px-4 text-sm font-semibold transition-colors active:bg-[#c85e2e]"
+              >
+                Add
+              </button>
+            </div>
+            {availableLists.length > 0 && (
+              <div className="pt-0.5">
+                <div className="flex flex-wrap gap-2">
+                  {availableLists.map((list) => (
+                    <button
+                      key={list}
+                      type="button"
+                      onClick={() => setTags([...tags, list])}
+                      className="hh-focus min-h-9 rounded-full border border-[var(--separator)] bg-[var(--surface)] px-3 text-sm font-medium text-[var(--brand)] transition-colors hover:bg-[var(--surface-hover)] active:bg-[var(--separator)]"
+                      aria-label={`Add ${list} list`}
+                    >
+                      {list}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -238,14 +293,14 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
 
         {initialData && (
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="status" className="mb-2 block text-xs font-bold uppercase tracking-[0.12em] text-[var(--subtle)]">
               Status
             </label>
             <select
               id="status"
               value={status ?? ''}
               onChange={(e) => setStatus(e.target.value === '' ? null : e.target.value as GroceryItem['status'])}
-              className="w-full px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="hh-field min-h-11 w-full rounded-xl border px-3 py-2.5 text-base"
             >
               <option value="">None</option>
               <option value="pending">Pending</option>
@@ -255,10 +310,10 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
           </div>
         )}
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-col-reverse gap-3 border-t border-[var(--separator)] pt-5 sm:flex-row sm:justify-end">
           <button
             type="submit"
-            className="flex-1 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium"
+            className="hh-action hh-focus min-h-11 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors active:bg-[#c85e2e] sm:order-2 sm:flex-none"
           >
             {submitLabel}
           </button>
@@ -266,7 +321,7 @@ export function ItemForm({ onSubmit, onCancel, initialData, submitLabel = 'Add I
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 border border-gray-700 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium"
+              className="hh-focus min-h-11 rounded-xl border border-[var(--separator)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)] sm:order-1"
             >
               Cancel
             </button>
