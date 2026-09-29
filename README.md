@@ -57,7 +57,11 @@ npm run build -- --webpack
 
 #### Environment variables
 
-Create a `.env` file in the repository root with a strong database password:
+Copy the template, then choose a strong database password:
+
+```bash
+cp .env.example .env
+```
 
 ```bash
 POSTGRES_PASSWORD=choose-a-strong-password
@@ -65,6 +69,8 @@ HARVESTHUB_IMAGE=ghcr.io/lord0fbytes/harvesthub:1.2.1
 ```
 
 Docker Compose passes this password to PostgreSQL and constructs the application's internal `DATABASE_URL` automatically. The application image is pinned to the release tag shown above. Omit `HARVESTHUB_IMAGE` to use the same default.
+
+HarvestHub images are published to the public GitHub Container Registry package at `ghcr.io/lord0fbytes/harvesthub`, so the Docker host does not need a GitHub token or `docker login` to pull them.
 
 #### Start the stack
 
@@ -84,7 +90,7 @@ The application is available at [http://localhost:3100](http://localhost:3100). 
 
 ### Updating the application image
 
-When a new release is published, GitHub Actions publishes both a versioned image and `latest` to GitHub Container Registry. To update intentionally, change `HARVESTHUB_IMAGE` in `.env` to the new version, then run:
+When a new release is published, GitHub Actions publishes both a versioned image (for example, `1.2.1`) and `latest` to GitHub Container Registry. Keep production deployments pinned to a versioned image: change `HARVESTHUB_IMAGE` in `.env` to the new version, then run:
 
 ```bash
 docker compose pull harvesthub
