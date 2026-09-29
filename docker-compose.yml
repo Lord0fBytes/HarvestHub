@@ -14,9 +14,7 @@ services:
     container_name: harvesthub-postgres
 
   harvesthub:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${HARVESTHUB_IMAGE:-ghcr.io/lord0fbytes/harvesthub:1.2.1}
     ports:
       - "3100:3000"
     environment:

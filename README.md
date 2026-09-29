@@ -61,15 +61,17 @@ Create a `.env` file in the repository root with a strong database password:
 
 ```bash
 POSTGRES_PASSWORD=choose-a-strong-password
+HARVESTHUB_IMAGE=ghcr.io/lord0fbytes/harvesthub:1.2.1
 ```
 
-Docker Compose passes this password to PostgreSQL and constructs the application's internal `DATABASE_URL` automatically.
+Docker Compose passes this password to PostgreSQL and constructs the application's internal `DATABASE_URL` automatically. The application image is pinned to the release tag shown above. Omit `HARVESTHUB_IMAGE` to use the same default.
 
 #### Start the stack
 
 ```bash
-# Build and run the application and database
-docker compose up -d --build
+# Pull and run the pinned application image and database
+docker compose pull harvesthub
+docker compose up -d
 
 # View logs
 docker compose logs -f
@@ -79,6 +81,15 @@ docker compose down
 ```
 
 The application is available at [http://localhost:3100](http://localhost:3100). PostgreSQL is bound to `127.0.0.1:5433` on the Docker host and is not exposed to the network.
+
+### Updating the application image
+
+When a new release is published, GitHub Actions publishes both a versioned image and `latest` to GitHub Container Registry. To update intentionally, change `HARVESTHUB_IMAGE` in `.env` to the new version, then run:
+
+```bash
+docker compose pull harvesthub
+docker compose up -d --no-deps harvesthub
+```
 
 ### One-time Supabase migration
 
