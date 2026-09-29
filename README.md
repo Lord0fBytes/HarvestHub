@@ -4,9 +4,9 @@ HarvestHub is a mobile-first Progressive Web App for planning, shopping for, and
 
 ## Current release
 
-**v1.2.0 — Visual Overhaul**
+**v1.2.1 — New Item Refinements**
 
-The current release introduces HarvestHub's warm brown-and-orange interface, compact responsive navigation, improved list density, and the HarvestHub leaf mark. See the [release notes](https://github.com/Lord0fBytes/HarvestHub/releases/tag/v1.2.0) for the full summary.
+The current release refines the New Item workflow with compact token inputs, quick-select Stores and Lists, updated Lists terminology, and the HarvestHub leaf favicon. See the [release notes](https://github.com/Lord0fBytes/HarvestHub/releases/tag/v1.2.1) for the full summary.
 
 ## Features
 

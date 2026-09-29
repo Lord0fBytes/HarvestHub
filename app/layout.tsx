@@ -7,7 +7,7 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { GroceryItemsProvider } from "@/contexts/GroceryItemsContext";
 import "./globals.css";
-import leafMark from "../ChatGPT Image Sep 28, 2026, 07_38_01 PM.png";
+import leafMark from "./harvesthub-leaf-mark.png";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

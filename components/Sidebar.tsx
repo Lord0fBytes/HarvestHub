@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { ServerStatus } from './ServerStatus';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
-import leafMark from '../ChatGPT Image Sep 28, 2026, 07_38_01 PM.png';
+import leafMark from '../app/harvesthub-leaf-mark.png';
 
 interface NavItem {
   name: string;
