@@ -14,12 +14,16 @@ Branch: `chore/dependency-maintenance`
 
 Create a focused branch for each item, update only that group, run the build, and manually test Planning, Shopping, All Items, Review, and database-backed item creation/editing before merging.
 
-- [ ] `next` + `eslint-config-next`: 16.0.7 -> 16.3.6
-- [ ] `react` + `react-dom`: 19.2.0 -> 19.3.0
-- [ ] `sharp`: 0.34.5 -> 0.35.4; confirm its install script/native binary works in local and Docker builds.
-- [ ] `eslint`: 9.39.5 -> 10.11.0; review config and rule changes.
-- [ ] `@types/node`: 20.19.43 -> 26.6.3; confirm the supported Node runtime first.
-- [ ] `typescript`: 5.9.3 -> 7.0.2; treat as a separate compatibility pass.
+- [x] `next` + `eslint-config-next`: updated to 16.3.6.
+- [x] `react` + `react-dom`: updated to 19.3.0.
+- [x] `@types/node`: updated to 26.6.3.
+- [ ] `sharp`: 0.34.5 -> 0.35.5; confirm its install script/native binary works in local and Docker builds.
+
+### Deferred updates
+
+- [ ] Hold `@ducanh2912/next-pwa` and its Workbox dependency chain for manual review. npm's suggested audit fix is an unexpected downgrade, so do not force it.
+- [ ] Hold `typescript` 5.9.3 -> 7.0.2 for a dedicated compiler compatibility pass.
+- [ ] Hold `eslint` 9.39.5 -> 10.11.0 until the Next.js lint plugin ecosystem supports ESLint 10.
 
 ## Visual refresh for 1.1.0
 
