@@ -70,7 +70,7 @@ HARVESTHUB_IMAGE=ghcr.io/lord0fbytes/harvesthub:1.2.1
 
 Docker Compose passes this password to PostgreSQL and constructs the application's internal `DATABASE_URL` automatically. The application image is pinned to the release tag shown above. Omit `HARVESTHUB_IMAGE` to use the same default.
 
-HarvestHub images are published to the public GitHub Container Registry package at `ghcr.io/lord0fbytes/harvesthub`, so the Docker host does not need a GitHub token or `docker login` to pull them.
+The v1.2.1 deployment image is hosted at `ghcr.io/lord0fbytes/harvesthub`. New images are configured to publish to the Gitea Container Registry at `gitea.massedonia.com/lordofbytes/harvesthub`.
 
 #### Start the stack
 
@@ -90,12 +90,18 @@ The application is available at [http://localhost:3100](http://localhost:3100). 
 
 ### Updating the application image
 
-Docker Compose defaults to the GHCR image for v1.2.1. The repository now lives on [Gitea](https://gitea.massedonia.com/lordofbytes/HarvestHub); its existing image workflow has not yet been verified for Gitea releases. Before updating to a future release, confirm that its versioned image was published. Then change `HARVESTHUB_IMAGE` in `.env` to that version and run:
+Docker Compose defaults to the GHCR image for v1.2.1. Before switching, confirm that the Gitea image exists. Then set `HARVESTHUB_IMAGE=gitea.massedonia.com/lordofbytes/harvesthub:1.2.2` in `.env` and run:
 
 ```bash
 docker compose pull harvesthub
 docker compose up -d --no-deps harvesthub
 ```
+
+### Publishing release images
+
+The release workflow is in `.gitea/workflows/publish-container.yml`. It builds the Git tag associated with a published Gitea release and pushes versioned and `latest` tags to the Gitea Container Registry. It can also be started manually with a `tag` input, such as `v1.2.2`.
+
+Publishing requires a Gitea Actions runner with an `ubuntu-latest` label and Docker build support. Add a personal access token for `lordofbytes` with package read/write permission as the repository Actions secret `REGISTRY_TOKEN`. Gitea's built-in job token cannot publish OCI images. Check that the workflow succeeded and the versioned image exists before changing the deployment image pin.
 
 ### One-time Supabase migration
 
