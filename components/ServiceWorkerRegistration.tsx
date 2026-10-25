@@ -25,7 +25,7 @@ export function ServiceWorkerRegistration() {
 
     const registerServiceWorker = () => {
         navigator.serviceWorker
-          .register('/sw.js')
+          .register('/sw.js', { updateViaCache: 'none' })
           .then((registration) => {
             console.log('Service Worker registered successfully:', registration.scope);
 
@@ -48,7 +48,11 @@ export function ServiceWorkerRegistration() {
           });
     };
 
-    window.addEventListener('load', registerServiceWorker);
+    if (document.readyState === 'complete') {
+      registerServiceWorker();
+    } else {
+      window.addEventListener('load', registerServiceWorker);
+    }
 
     return () => {
       window.removeEventListener('load', registerServiceWorker);

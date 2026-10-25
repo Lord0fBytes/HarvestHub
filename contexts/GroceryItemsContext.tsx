@@ -13,54 +13,72 @@ interface GroceryItemsContextType {
   error: string | null;
 }
 
+interface GroceryItemRow {
+  id: string;
+  name: string;
+  quantity: number | string;
+  unit: string;
+  status: GroceryItem['status'];
+  type: GroceryItem['type'];
+  stores: string[] | null;
+  aisle: string | null;
+  tags: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const GroceryItemsContext = createContext<GroceryItemsContextType | undefined>(undefined);
+
+async function fetchItems(signal: AbortSignal): Promise<GroceryItem[]> {
+  // The unique URL bypasses older cache-first service workers during upgrades.
+  const response = await fetch(`/api/grocery-items?_refresh=${Date.now()}`, {
+    cache: 'no-store',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch items');
+  }
+
+  const { items: data }: { items: GroceryItemRow[] } = await response.json();
+
+  return (data || []).map((item) => ({
+    id: item.id,
+    name: item.name,
+    quantity: Number(item.quantity),
+    unit: item.unit,
+    status: item.status,
+    type: item.type,
+    stores: item.stores || [],
+    aisle: item.aisle || undefined,
+    tags: item.tags || [],
+    createdAt: new Date(item.created_at),
+    updatedAt: new Date(item.updated_at),
+  }));
+}
 
 export function GroceryItemsProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<GroceryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load items from Supabase on mount
   useEffect(() => {
-    loadItems();
+    const controller = new AbortController();
+    void fetchItems(controller.signal)
+      .then((data) => {
+        if (!controller.signal.aborted) setItems(data);
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return;
+        console.error('Error loading items:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load items');
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
+
+    return () => controller.abort();
   }, []);
-
-  const loadItems = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await fetch('/api/grocery-items');
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch items');
-      }
-
-      const { items: data } = await response.json();
-
-      // Transform API data to match our GroceryItem interface
-      const transformedItems: GroceryItem[] = (data || []).map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        unit: item.unit,
-        status: item.status,
-        type: item.type,
-        stores: item.stores || [],
-        aisle: item.aisle || undefined,
-        tags: item.tags || [],
-        createdAt: new Date(item.created_at),
-        updatedAt: new Date(item.updated_at),
-      }));
-
-      setItems(transformedItems);
-    } catch (err) {
-      console.error('Error loading items:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load items');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const addItem = useCallback(async (input: CreateGroceryItemInput): Promise<GroceryItem | null> => {
     try {

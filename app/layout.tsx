@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { BottomNav } from "@/components/BottomNav";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { GroceryItemsProvider } from "@/contexts/GroceryItemsContext";
 import "./globals.css";
 import leafMark from "./harvesthub-leaf-mark.png";
@@ -67,6 +68,8 @@ export default function RootLayout({
 
           {/* PWA Install Prompt */}
           <InstallPrompt />
+
+          <PullToRefresh />
 
           {/* Service Worker Registration */}
           <ServiceWorkerRegistration />
