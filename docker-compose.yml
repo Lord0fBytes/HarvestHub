@@ -14,7 +14,7 @@ services:
     container_name: harvesthub-postgres
 
   harvesthub:
-    image: ${HARVESTHUB_IMAGE:-ghcr.io/lord0fbytes/harvesthub:1.2.1}
+    image: ${HARVESTHUB_IMAGE:-ghcr.io/lord0fbytes/harvesthub:v1.2.2}
     ports:
       - "3100:3000"
     environment:
