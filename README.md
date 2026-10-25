@@ -90,7 +90,7 @@ The application is available at [http://localhost:3100](http://localhost:3100). 
 
 ### Updating the application image
 
-Docker Compose defaults to the GHCR image for v1.2.1. Before switching, confirm that the Gitea image exists. Then set `HARVESTHUB_IMAGE=gitea.massedonia.com/lordofbytes/harvesthub:1.2.2` in `.env` and run:
+Docker Compose defaults to the GHCR image for v1.2.1. Before switching, confirm that the Gitea image exists. Then set `HARVESTHUB_IMAGE=gitea.massedonia.com/lordofbytes/harvesthub:v1.2.2` in `.env` and run:
 
 ```bash
 docker compose pull harvesthub
@@ -99,7 +99,7 @@ docker compose up -d --no-deps harvesthub
 
 ### Publishing release images
 
-The release workflow is in `.gitea/workflows/publish-container.yml`. It builds the Git tag associated with a published Gitea release and pushes versioned and `latest` tags to the Gitea Container Registry. It can also be started manually with a `tag` input, such as `v1.2.2`.
+The release workflow is in `.gitea/workflows/publish-container.yml`. It builds the Git tag associated with a published Gitea release and pushes matching versioned and `latest` tags to the Gitea Container Registry. For example, release `v1.2.2` publishes `v1.2.2` and `latest`. It can also be started manually with a `tag` input, such as `v1.2.2`.
 
 Publishing requires a Gitea Actions runner with an `ubuntu-latest` label and Docker build support. Add a personal access token for `lordofbytes` with package read/write permission as the repository Actions secret `REGISTRY_TOKEN`. Gitea's built-in job token cannot publish OCI images. Check that the workflow succeeded and the versioned image exists before changing the deployment image pin.
 

@@ -13,7 +13,7 @@
 1. Validate Review completion against the production database: [issue #9](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/9).
 2. Propagate failed item writes to callers and prevent false success messages: [issue #11](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/11).
 3. Resolve the remaining lint findings, then add focused tests for item mutations and Review completion.
-4. Register a Gitea Actions runner, add the package-write `REGISTRY_TOKEN` secret, and manually publish and verify the v1.2.2 image. Keep deployments pinned to a verified version.
+4. Register a Gitea Actions runner, add the package-write `REGISTRY_TOKEN` secret, and manually publish and verify the `v1.2.2` and `latest` images. Keep deployments pinned to a verified version.
 
 ## Later ideas already tracked
 
