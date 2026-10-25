@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
 
 export default function ReviewPage() {
-  const { items, updateItem } = useGroceryItems();
+  const { items, updateItem, isLoading, error } = useGroceryItems();
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -17,23 +17,22 @@ export default function ReviewPage() {
 
   const handleCompletePurchasing = async () => {
     const purchasedItems = items.filter(item => item.status === 'purchased');
+    const skippedItems = items.filter(item => item.status === 'skipped');
+    const completedCount = purchasedItems.length + skippedItems.length;
 
-    if (purchasedItems.length === 0) {
-      alert('No purchased items to complete.');
+    if (completedCount === 0) {
+      alert('No purchased or skipped items to complete.');
       return;
     }
 
-    if (window.confirm(`Complete purchasing for ${purchasedItems.length} item(s)? This will clear their status and set quantity to 0.`)) {
-      // Clear status and quantity for all purchased items
-      const updatePromises = purchasedItems.map(item =>
-        updateItem(item.id, {
-          status: null,
-          quantity: 0
-        })
-      );
+    if (window.confirm(`Complete purchasing for ${completedCount} item(s)? This will clear purchased and skipped statuses, set purchased quantities to 0, and leave pending items unchanged.`)) {
+      const updatePromises = [
+        ...purchasedItems.map(item => updateItem(item.id, { status: null, quantity: 0 })),
+        ...skippedItems.map(item => updateItem(item.id, { status: null })),
+      ];
 
       await Promise.all(updatePromises);
-      alert(`${purchasedItems.length} purchased item(s) have been completed!`);
+      alert(`${completedCount} purchased or skipped item(s) have been completed!`);
     }
   };
 
@@ -48,7 +47,13 @@ export default function ReviewPage() {
             <p className="mb-5 text-[var(--muted)] md:text-lg">Wrap up your latest shopping trip.</p>
 
             {/* Statistics */}
-            {items.length > 0 && (
+            {isLoading ? (
+              <p className="mb-6 text-sm text-[var(--muted)]">Loading item counts…</p>
+            ) : error && items.length === 0 ? (
+              <p role="alert" className="mb-6 rounded-xl border border-[var(--separator)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+                Item counts are unavailable because the items could not be loaded. Check the database connection and refresh this page.
+              </p>
+            ) : (
               <div className="mb-6 grid grid-cols-3 gap-2 sm:gap-4">
                 <div className="rounded-2xl border border-[var(--separator)] bg-[var(--surface)] p-3 sm:p-4">
                   <div className="text-2xl font-bold text-[var(--action)]">{stats.pending}</div>
@@ -70,12 +75,13 @@ export default function ReviewPage() {
               <div className="flex flex-col items-center">
                 <button
                   onClick={handleCompletePurchasing}
-                  className="hh-action hh-focus min-h-12 w-full rounded-xl px-8 py-3 text-lg font-semibold transition-colors active:bg-[#c85e2e] sm:w-auto"
+                  disabled={isLoading || (error !== null && items.length === 0)}
+                  className="hh-action hh-focus min-h-12 w-full rounded-xl px-8 py-3 text-lg font-semibold transition-colors active:bg-[#c85e2e] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   Complete Purchasing
                 </button>
                 <p className="mt-2 text-center text-xs text-[var(--muted)]">
-                  Clears all purchased items from your shopping list
+                  Clears purchased and skipped statuses. Pending items stay on your list.
                 </p>
               </div>
             </div>
