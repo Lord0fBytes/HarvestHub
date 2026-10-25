@@ -7,7 +7,7 @@
 - **v1.2.1:** Refined New Item form, quick-select Stores and Lists, terminology, and app icon.
 - **v1.2.2:** Planning search clear button and responsive layout, mobile pull-to-refresh, and Review completion for purchased and skipped items ([#7](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/7), [#8](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/8), [#9](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/9)).
 
-The current source release is [v1.2.2](https://gitea.massedonia.com/lordofbytes/HarvestHub/releases/tag/v1.2.2). Its `v1.2.2` and `latest` images are published to GHCR.
+The current source release is [v1.2.2](https://gitea.massedonia.com/lordofbytes/HarvestHub/releases/tag/v1.2.2). Its `1.2.2` and `latest` images are published to GHCR.
 
 ## Next release candidates
 

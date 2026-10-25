@@ -6,7 +6,7 @@ HarvestHub is a mobile-first Progressive Web App for planning, shopping for, and
 
 **v1.2.2 — Shopping Workflow Hotfixes**
 
-This source release adds a clear button and responsive layout for Planning search, pull-to-refresh on mobile, and Review completion for both purchased and skipped items. See the [Gitea release notes](https://gitea.massedonia.com/lordofbytes/HarvestHub/releases/tag/v1.2.2) for the full summary. The matching container image is published to GHCR as `v1.2.2` and `latest`.
+This source release adds a clear button and responsive layout for Planning search, pull-to-refresh on mobile, and Review completion for both purchased and skipped items. See the [Gitea release notes](https://gitea.massedonia.com/lordofbytes/HarvestHub/releases/tag/v1.2.2) for the full summary. The matching container image is published to GHCR as `1.2.2` and `latest`.
 
 ## Features
 
@@ -65,7 +65,7 @@ cp .env.example .env
 
 ```bash
 POSTGRES_PASSWORD=choose-a-strong-password
-HARVESTHUB_IMAGE=ghcr.io/lord0fbytes/harvesthub:v1.2.2
+HARVESTHUB_IMAGE=ghcr.io/lord0fbytes/harvesthub:1.2.2
 ```
 
 Docker Compose passes this password to PostgreSQL and constructs the application's internal `DATABASE_URL` automatically. The application image is pinned to the release tag shown above. Omit `HARVESTHUB_IMAGE` to use the same default.
@@ -90,7 +90,7 @@ The application is available at [http://localhost:3100](http://localhost:3100). 
 
 ### Updating the application image
 
-Docker Compose defaults to the GHCR image for v1.2.2. Keep production deployments pinned to a versioned image. To use `latest` instead, set `HARVESTHUB_IMAGE=ghcr.io/lord0fbytes/harvesthub:latest` in `.env`. Then run:
+Docker Compose defaults to the GHCR image for 1.2.2. Keep production deployments pinned to a versioned image. To use `latest` instead, set `HARVESTHUB_IMAGE=ghcr.io/lord0fbytes/harvesthub:latest` in `.env`. Then run:
 
 ```bash
 docker compose pull harvesthub
