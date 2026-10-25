@@ -121,7 +121,7 @@ export function InstallPrompt() {
           <div className="flex-1">
             <h3 className="font-semibold text-white mb-1">Install HarvestHub</h3>
             <p className="text-sm text-green-50">
-              Install this app for quick access and offline use while shopping.
+              Install this app for quick access while shopping.
             </p>
           </div>
           <button

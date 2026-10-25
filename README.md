@@ -4,17 +4,17 @@ HarvestHub is a mobile-first Progressive Web App for planning, shopping for, and
 
 ## Current release
 
-**v1.2.1 — New Item Refinements**
+**v1.2.2 — Shopping Workflow Hotfixes**
 
-The current release refines the New Item workflow with compact token inputs, quick-select Stores and Lists, updated Lists terminology, and the HarvestHub leaf favicon. See the [release notes](https://github.com/Lord0fBytes/HarvestHub/releases/tag/v1.2.1) for the full summary.
+This source release adds a clear button and responsive layout for Planning search, pull-to-refresh on mobile, and Review completion for both purchased and skipped items. See the [Gitea release notes](https://gitea.massedonia.com/lordofbytes/HarvestHub/releases/tag/v1.2.2) for the full summary. The deployment image remains pinned to v1.2.1 until a v1.2.2 image is verified.
 
 ## Features
 
 - **Plan your shop** — Search and filter the master list by type or tag, then add an item to the current cart. The same control removes it if added by mistake.
 - **Shopping mode** — Work through pending items by store and aisle, mark them purchased, undo a purchase, or swipe to skip an item on mobile.
-- **Review & complete** — Review pending, purchased, and skipped totals; complete a trip to clear purchased items for the next shop.
+- **Review & complete** — Review pending, purchased, and skipped totals; complete a trip to clear purchased and skipped statuses while leaving pending items alone.
 - **All items** — Maintain the master list, including item names, type, stores, aisle, tags, and status.
-- **Mobile-first PWA** — Responsive desktop and mobile navigation, install support, and a layout tuned for quick use on a phone.
+- **Mobile-first PWA** — Responsive desktop and mobile navigation, install support, and a layout tuned for quick use on a phone. Offline shopping is not currently supported.
 - **PostgreSQL-backed** — Item data is persisted in PostgreSQL, with Docker Compose for deployment and a backup script for routine maintenance.
 
 ## Tech stack
@@ -45,7 +45,7 @@ The example assumes an SSH tunnel that exposes PostgreSQL on local port `15432`.
 For the production build used to verify changes locally:
 
 ```bash
-npm run build -- --webpack
+npm run build
 ```
 
 ### Docker deployment
@@ -90,7 +90,7 @@ The application is available at [http://localhost:3100](http://localhost:3100). 
 
 ### Updating the application image
 
-When a new release is published, GitHub Actions publishes both a versioned image (for example, `1.2.1`) and `latest` to GitHub Container Registry. Keep production deployments pinned to a versioned image: change `HARVESTHUB_IMAGE` in `.env` to the new version, then run:
+Docker Compose defaults to the GHCR image for v1.2.1. The repository now lives on [Gitea](https://gitea.massedonia.com/lordofbytes/HarvestHub); its existing image workflow has not yet been verified for Gitea releases. Before updating to a future release, confirm that its versioned image was published. Then change `HARVESTHUB_IMAGE` in `.env` to that version and run:
 
 ```bash
 docker compose pull harvesthub

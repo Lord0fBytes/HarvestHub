@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "HarvestHub - Your Grocery Shopping Companion",
-  description: "A progressive web app for managing grocery lists with smart organization and offline support",
+  description: "An installable app for planning and shopping with organized grocery lists",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

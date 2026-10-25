@@ -1,92 +1,23 @@
-# HarvestHub Version Roadmap
+# HarvestHub Roadmap
 
-This document outlines the planned features and releases for HarvestHub, from basic functionality through production launch.
+## Shipped
 
-## Version 0.1.0 - Foundation & Basic Items ✅
+- **v1.0.x:** Planning, Shopping, Review, and All Items workflows; PostgreSQL persistence; Docker deployment and backups.
+- **v1.2.0:** Warm dark visual overhaul across the app ([completed issue #6](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/6)).
+- **v1.2.1:** Refined New Item form, quick-select Stores and Lists, terminology, and app icon.
+- **v1.2.2:** Planning search clear button and responsive layout, mobile pull-to-refresh, and Review completion for purchased and skipped items ([#7](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/7), [#8](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/8), [#9](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/9)).
 
-- Basic item CRUD operations (create, read, update, delete)
-- Simple list view with core properties
-- Item properties: name, quantity, unit of measure, status
-- In-memory state management (no persistence yet)
+The current source release is [v1.2.2](https://gitea.massedonia.com/lordofbytes/HarvestHub/releases/tag/v1.2.2). The deployment image remains pinned to v1.2.1 until a v1.2.2 image is verified.
 
-## Version 0.2.0 - Item Organization ✅
+## Next release candidates
 
-- ✅ Tagging system implementation (multi-tag support)
-- ✅ Add store and aisle/row properties
-- ✅ Basic filtering by tags
-- ✅ Sort functionality (name, store, aisle, date added)
-- ✅ Enhanced ItemForm with new fields
-- ✅ Tag badges with visual feedback
+- Failed item updates are shown to the user and never reported as successful ([#11](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/11)).
+- Lint passes, critical item flows have focused tests, and release checks run before image publishing.
+- Container publishing is verified against Gitea before a new version is advertised.
 
-## Version 0.3.0 - Full List Page ✅
+## Backlog
 
-- ✅ Complete master list view
-- ✅ Advanced filtering (by store, tags, status)
-- ✅ Search functionality (name, store, aisle, tags)
-- ✅ Bulk operations (select all, mark as purchased, delete multiple)
-- ✅ Statistics dashboard (total, pending, purchased, skipped)
-- ✅ Modal-based add/edit forms (cleaner UI)
-- ✅ Responsive navigation system:
-  - Desktop: Left sidebar navigation
-  - Mobile: Bottom navigation bar
-- ✅ Multi-page structure with placeholders:
-  - Planning page (home)
-  - Shopping page
-  - Review page
-  - All Items page (full featured)
-- ✅ Sample data loading for testing
+- Define an external API for other clients ([#10](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/10)).
+- Consider trip history, recipes, and meal planning after the current shopping workflow is stable.
 
-## Version 0.4.0 - Planning Page & Data Model Enhancements ✅
-
-- ✅ Planning page with search functionality
-- ✅ Quick-add items to shopping list (sets status to pending)
-- ✅ Visual feedback for items already on list
-- ✅ Supabase database integration (persistent data)
-- ✅ Item type classification (grocery/supply/clothing/other)
-- ✅ Multiple stores per item (stores array)
-- ✅ Null status support for master list items
-- ✅ Enhanced ItemForm with type and stores fields
-- ✅ Type filter and sort in All Items page
-- ✅ Database migrations with indexes
-
-## Version 0.5.0 - Ordering Page (Shopping Mode)
-
-- Shopping-optimized view organized by store aisles
-- Check off items as you shop
-- Mobile-first, touch-friendly interface
-- Quick navigation between aisles
-
-## Version 0.6.0 - Review Page
-
-- Post-shopping review interface
-- Mark items as purchased vs skipped
-- Note substitutions or price changes
-- Shopping trip history/summary
-
-## Version 0.7.0 - Advanced Features
-
-- Recipe integration
-- Meal planning functionality
-- Shopping trip history
-- ORM refinements (if needed)
-
-## Version 0.8.0 - PWA Features
-
-- Progressive Web App manifest
-- Offline support for in-store use
-- Install prompt for home screen
-- Service worker for caching
-
-## Version 0.9.0 - Public API & Polish
-
-- Public API endpoints for Claude/AI access
-- UI/UX refinements based on usage
-- Performance optimization
-- Mobile responsiveness polish
-
-## Version 1.0.0 - Production Launch
-
-- Final testing and bug fixes
-- Documentation
-- Deployment to Vercel
-- Production ready
+Offline shopping is not planned for the current release cycle. The app may be installed on a device, but current shopping data and changes require a connection to the server.

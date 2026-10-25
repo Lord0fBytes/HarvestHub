@@ -1,48 +1,22 @@
 # Next
 
-## Finish compatible dependency maintenance
+## Current baseline
 
-Branch: `chore/dependency-maintenance`
+- Source release: [v1.2.2](https://gitea.massedonia.com/lordofbytes/HarvestHub/releases/tag/v1.2.2), hosted in Gitea.
+- Planning, Shopping, Review, and All Items are implemented with PostgreSQL persistence and a Docker deployment.
+- `npm run build` passes. Changed files pass targeted ESLint checks. Full repository lint and automated test coverage remain to be addressed.
+- The PWA is installable, but offline shopping is not supported in the current scope.
+- The deployment is pinned to the GHCR v1.2.1 image. Verify v1.2.2 image publishing before changing the deployment pin.
 
-- [ ] Review and commit the compatible dependency refresh in `package-lock.json`.
-- [ ] Keep `package.json` unchanged; the existing version ranges already accepted these updates.
-- [x] Verify production build: `npm run build` passes.
-- [ ] Decide how to address the 15 lint errors and 4 warnings separately from dependency maintenance.
-- [ ] Review the 8 `npm audit` findings before attempting any audit fix. Do not use `npm audit fix --force` without a dedicated upgrade plan.
+## Next work
 
-## Upgrade larger dependencies one group at a time
+1. Validate Review completion against the production database: [issue #9](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/9).
+2. Propagate failed item writes to callers and prevent false success messages: [issue #11](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/11).
+3. Resolve the remaining lint findings, then add focused tests for item mutations and Review completion.
+4. Verify or adapt the container publish workflow for Gitea, including GHCR authentication and the published image tag. Keep deployments pinned to a verified version.
 
-Create a focused branch for each item, update only that group, run the build, and manually test Planning, Shopping, All Items, Review, and database-backed item creation/editing before merging.
+## Later ideas already tracked
 
-- [x] `next` + `eslint-config-next`: updated to 16.3.6.
-- [x] `react` + `react-dom`: updated to 19.3.0.
-- [x] `@types/node`: updated to 26.6.3.
-- [ ] `sharp`: 0.34.5 -> 0.35.5; confirm its install script/native binary works in local and Docker builds.
+- [Issue #10](https://gitea.massedonia.com/lordofbytes/HarvestHub/issues/10): API integration for external clients.
 
-### Deferred updates
-
-- [ ] Hold `@ducanh2912/next-pwa` and its Workbox dependency chain for manual review. npm's suggested audit fix is an unexpected downgrade, so do not force it.
-- [ ] Hold `typescript` 5.9.3 -> 7.0.2 for a dedicated compiler compatibility pass.
-- [ ] Hold `eslint` 9.39.5 -> 10.11.0 until the Next.js lint plugin ecosystem supports ESLint 10.
-
-## Visual refresh for 1.1.0
-
-Branch: `feature/visual-update-1.1.0`
-
-Use UI/UX Pro Max for each focused UI task: start with a targeted UX query for the observed issue, then verify the change at desktop and mobile widths. Keep visual fixes separate from dependency work.
-
-### Visual audit prompts (not yet confirmed bugs)
-
-- [ ] Review Planning at 320px, 375px, tablet, and desktop widths for overflow, row density, and readable item names.
-- [ ] Review Shopping with long item names, many tags, and multiple stores.
-- [ ] Confirm all tap targets are comfortably touch-sized and neighboring controls have clear spacing.
-- [ ] Check keyboard focus states, icon-only button labels, and dark-mode contrast.
-- [ ] Compare headings, cards, pills, buttons, and empty states for consistent spacing, typography, and color treatment.
-- [ ] Review add/edit modal spacing, labels, validation feedback, and mobile safe-area behavior.
-- [ ] Record each confirmed visual bug here with its page, viewport, screenshot/reference, and intended outcome before implementing it.
-
-## Before each merge
-
-- [ ] Run `npm run build`.
-- [ ] Test against the PostgreSQL SSH tunnel when the change touches live item data.
-- [ ] Note any lint or audit findings separately unless the branch explicitly addresses them.
+Offline shopping is deferred.
