@@ -70,6 +70,22 @@ select.hh-field {
   padding-right: 2.5rem;
 }
 
+.hh-planning-search {
+  flex: 1 1 18rem;
+  min-width: min(18rem, 100%);
+}
+
+.hh-planning-filters {
+  flex: 0 1 23rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+select.hh-planning-filter-select {
+  background-position: right 0.625rem center;
+  padding-right: 2rem;
+}
+
 .hh-action {
   background: var(--action);
   color: var(--on-action);

@@ -17,6 +17,7 @@ export default function PlanningPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const touchStartX = useRef(0);
   const touchCurrentX = useRef(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Detect if device supports touch
@@ -185,20 +186,24 @@ export default function PlanningPage() {
             </p>
 
             {/* Search and type filter */}
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row">
-              <div className="relative flex-1">
+            <div className="mb-6 flex flex-wrap items-center gap-3">
+              <div className="hh-planning-search relative">
+                <label htmlFor="planning-search" className="sr-only">Search items</label>
                 <input
+                  id="planning-search"
+                  ref={searchInputRef}
                   type="text"
                   placeholder="Search items..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="hh-field min-h-12 w-full rounded-xl border px-4 py-3 pl-10"
+                  className="hh-field min-h-12 w-full rounded-xl border px-4 py-3 pl-10 pr-12"
                 />
                 <svg
-                  className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--subtle)]"
+                  className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--subtle)]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -207,41 +212,59 @@ export default function PlanningPage() {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      searchInputRef.current?.focus();
+                    }}
+                    className="hh-focus absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
+                    aria-label="Clear Planning search"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
               </div>
-              <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-3">
-              <div className="min-w-0 sm:w-48">
-                <label htmlFor="type-filter" className="sr-only">
-                  Filter by item type
-                </label>
-                <select
-                  id="type-filter"
-                  value={selectedType}
-                  onChange={(event) => setSelectedType(event.target.value as ItemType | 'all')}
-                  className="hh-field min-h-12 w-full rounded-xl border px-3"
-                >
-                  <option value="all">All Types</option>
-                  <option value="grocery">Grocery</option>
-                  <option value="supply">Supply</option>
-                  <option value="clothing">Clothing</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div className="min-w-0 sm:w-48">
-                <label htmlFor="tag-filter" className="sr-only">
-                  Filter by list
-                </label>
-                <select
-                  id="tag-filter"
-                  value={selectedTag}
-                  onChange={(event) => setSelectedTag(event.target.value)}
-                  className="hh-field min-h-12 w-full rounded-xl border px-3"
-                >
-                  <option value="all">All Lists</option>
-                  {tags.map((tag) => (
-                    <option key={tag} value={tag}>{tag}</option>
-                  ))}
-                </select>
-              </div>
+              <div className="hh-planning-filters flex items-center gap-2">
+                <span className="shrink-0 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]">Filters</span>
+                <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
+                  <div className="min-w-0">
+                    <label htmlFor="type-filter" className="sr-only">
+                      Filter by item type
+                    </label>
+                    <select
+                      id="type-filter"
+                      value={selectedType}
+                      onChange={(event) => setSelectedType(event.target.value as ItemType | 'all')}
+                      className="hh-field hh-planning-filter-select min-h-11 w-full rounded-xl border px-3 text-sm"
+                    >
+                      <option value="all">All Types</option>
+                      <option value="grocery">Grocery</option>
+                      <option value="supply">Supply</option>
+                      <option value="clothing">Clothing</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div className="min-w-0">
+                    <label htmlFor="tag-filter" className="sr-only">
+                      Filter by list
+                    </label>
+                    <select
+                      id="tag-filter"
+                      value={selectedTag}
+                      onChange={(event) => setSelectedTag(event.target.value)}
+                      className="hh-field hh-planning-filter-select min-h-11 w-full rounded-xl border px-3 text-sm"
+                    >
+                      <option value="all">All Lists</option>
+                      {tags.map((tag) => (
+                        <option key={tag} value={tag}>{tag}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
 

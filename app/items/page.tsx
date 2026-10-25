@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useGroceryItems } from '@/hooks/useGroceryItems';
 import { GroceryList } from '@/components/GroceryList';
 import { ItemForm } from '@/components/ItemForm';
@@ -20,6 +20,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<SortOption>('dateAdded');
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const editingItem = editingId ? items.find(item => item.id === editingId) : null;
 
@@ -345,14 +346,32 @@ export default function Home() {
 
             {/* Search Bar */}
             {items.length > 0 && (
-              <div className="mb-4">
+              <div className="relative mb-4">
+                <label htmlFor="all-items-search" className="sr-only">Search all items</label>
                 <input
+                  id="all-items-search"
+                  ref={searchInputRef}
                   type="text"
-                placeholder="Search items by name, store, aisle, or lists..."
+                  placeholder="Search items by name, store, aisle, or lists..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="hh-field min-h-12 w-full rounded-xl border px-4 py-3 text-base"
+                  className="hh-field min-h-12 w-full rounded-xl border px-4 py-3 pr-12 text-base"
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      searchInputRef.current?.focus();
+                    }}
+                    className="hh-focus absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
+                    aria-label="Clear All Items search"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
               </div>
             )}
 
